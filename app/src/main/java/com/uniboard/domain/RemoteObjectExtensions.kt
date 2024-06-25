@@ -6,6 +6,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -30,7 +31,8 @@ object RemoteObject {
 
     fun createDiff(oldObj: UObject, obj: UObject): Map<String, JsonElement> {
         return obj.state.diffWith(oldObj.state) + mapOf(
-            "uniboardData" to (obj.state["uniboardData"] ?: JsonNull)
+            "uniboardData" to (obj.state["uniboardData"] ?: JsonNull),
+            "selectable" to JsonPrimitive(true)
         )
     }
 

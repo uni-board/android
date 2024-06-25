@@ -121,10 +121,6 @@ class BoardViewModel(
                             if (it.id == diffId) {
                                 RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
                                     .toUiUObject()
-                                    .also {
-                                        println("DIFF=${update.diff}")
-                                        println("UPDATED=$it")
-                                    }
                             } else it
                         }
                     }

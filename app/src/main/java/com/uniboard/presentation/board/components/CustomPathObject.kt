@@ -75,7 +75,6 @@ private fun Path.drawLine(obj: UiUObject) {
         y1 *= -1
         y2 *= -1
     }
-    println("x1 = $x1, y1 = $y1, x2 = $x2, y2 = $y2")
     if (y1 < y2) {
         moveTo(x1 - x2, 0f)
         lineTo(0f, y2 - y1)

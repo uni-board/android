@@ -33,7 +33,6 @@ fun PathObject(obj: UiUObject, modifier: Modifier = Modifier) {
         addPathNodes(pathString).toPath()
     }
     val strokeWidth = remember(obj) {
-        println(obj.state)
         obj.state["strokeWidth"]?.jsonPrimitive?.content?.toFloat() ?: 100f
     }
     val cap = remember(obj) {
