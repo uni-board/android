@@ -1,5 +1,6 @@
 package com.uniboard.presentation.board
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -28,12 +29,14 @@ import kotlinx.serialization.json.jsonPrimitive
 fun RootModule.BoardViewModel(id: String) =
     BoardViewModel(remoteObjectRepository(id), remoteObjectModifier(id))
 
+@Immutable
 data class BoardScreenState(
     val objects: List<UiUObject>,
     val toolMode: BoardToolMode,
     val eventSink: (BoardScreenEvent) -> Unit
 )
 
+@Immutable
 sealed interface BoardToolMode {
     data object View : BoardToolMode
     data object Edit : BoardToolMode
@@ -57,6 +60,7 @@ enum class ShapeType {
     Line
 }
 
+@Immutable
 sealed interface BoardScreenEvent {
     data class TransformObject(
         val oldObj: UiUObject,
@@ -66,6 +70,7 @@ sealed interface BoardScreenEvent {
     data class SetToolMode(val mode: BoardToolMode) : BoardScreenEvent
 }
 
+@Immutable
 data class UiUObject(
     val id: String,
     val type: String,

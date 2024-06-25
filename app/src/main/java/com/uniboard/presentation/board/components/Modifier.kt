@@ -28,10 +28,11 @@ fun Modifier.transformable(
     enabled: Boolean = true,
     onEnd: (scaleX: Float, scaleY: Float, rotation: Float, offset: IntOffset) -> Unit
 ) = composed {
-    var scaleX by remember(obj) { mutableFloatStateOf(obj.scaleX) }
-    var scaleY by remember(obj) { mutableFloatStateOf(obj.scaleY) }
-    var rotation by remember(obj) { mutableFloatStateOf(obj.angle) }
-    var offset by remember(obj) {
+    var scaleX by remember(obj.scaleX) { mutableFloatStateOf(obj.scaleX) }
+    var scaleY by remember(obj.scaleY) { mutableFloatStateOf(obj.scaleY) }
+    var rotation by remember(obj.angle) { mutableFloatStateOf(obj.angle) }
+    var offset by remember(obj.left, obj.top) {
+        println("Created new offset")
         mutableStateOf(
             Offset(
                 obj.left.toFloat(),
@@ -69,6 +70,11 @@ fun Modifier.transformable(
                     rotation += rotationChange
                     val newOffset = panChange.rotateBy(rotation)
                     offset += Offset(newOffset.x * scaleX, newOffset.y * scaleY)
+
+                    println(scaleX)
+                    println(scaleY)
+                    println(rotation)
+                    println(offset)
                 }
             )
         }

@@ -53,6 +53,7 @@ class RemoteObjectModifierImpl(
     }
 
     override suspend fun send(update: UObjectUpdate): Result<Unit> = kotlin.runCatching {
+        println(update)
         when (update) {
             is UObjectUpdate.Add -> socket.emit("created", update.obj.state.toString())
             is UObjectUpdate.Modify -> socket.emit(
