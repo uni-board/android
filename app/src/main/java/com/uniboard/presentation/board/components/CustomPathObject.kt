@@ -49,38 +49,46 @@ fun CustomPathObject(obj: UiUObject, modifier: Modifier = Modifier) {
     })
 }
 
-private fun Path.drawTriangle(size: Size) {
+fun Path.drawTriangle(size: Size) {
     moveTo(size.width / 2, 0f)
     lineTo(size.width, size.height)
     lineTo(0f, size.height)
     close()
 }
 
-private fun Path.drawRect(size: Size) {
+fun Path.drawRect(size: Size) {
     addRect(size.toRect())
 }
 
-private fun Path.drawOval(size: Size) {
+fun Path.drawOval(size: Size) {
     addOval(size.toRect())
 }
 
-private fun Path.drawLine(obj: UiUObject) {
+fun Path.drawLine(obj: UiUObject) {
     var x1 = obj.state["x1"]?.jsonPrimitive?.content?.toFloat() ?: 0f
     var y1 = obj.state["y1"]?.jsonPrimitive?.content?.toFloat() ?: 0f
     var x2 = obj.state["x2"]?.jsonPrimitive?.content?.toFloat() ?: 0f
     var y2 = obj.state["y2"]?.jsonPrimitive?.content?.toFloat() ?: 0f
+    drawLine(x1, y1, x2, y2)
+}
+
+fun Path.drawLine(x1: Float, y1: Float, x2: Float, y2: Float) {
+    var nx1 = x1
+    var ny1 = y1
+    var nx2 = x2
+    var ny2 = y2
     if (x2 > x1) {
-        x1 *= -1
-        x2 *= -1
-        y1 *= -1
-        y2 *= -1
+        nx1 *= -1
+        nx2 *= -1
+        ny1 *= -1
+        ny2 *= -1
     }
-    if (y1 < y2) {
-        moveTo(x1 - x2, 0f)
-        lineTo(0f, y2 - y1)
+    if (ny1 < ny2) {
+        moveTo(nx1 - nx2, 0f)
+        lineTo(0f, ny2 - ny1)
     } else {
         moveTo(0f, 0f)
-        lineTo(x1 - x2, y1 - y2)
+        lineTo(nx1 - nx2, ny1 - ny2)
     }
 }
 

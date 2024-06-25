@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.uniboard.domain.RemoteObject
@@ -20,6 +21,7 @@ import com.uniboard.domain.UObject
 import com.uniboard.domain.UObjectUpdate
 import com.uniboard.util.diffWith
 import com.uniboard.util.mutate
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -33,6 +35,7 @@ fun RootModule.BoardViewModel(id: String) =
 data class BoardScreenState(
     val objects: List<UiUObject>,
     val toolMode: BoardToolMode,
+    val showToolOptions: Boolean,
     val eventSink: (BoardScreenEvent) -> Unit
 )
 
@@ -40,16 +43,16 @@ data class BoardScreenState(
 sealed interface BoardToolMode {
     data object View : BoardToolMode
     data object Edit : BoardToolMode
-    data class Pen(val width: Int, val color: Color) : BoardToolMode
+    data class Pen(val width: Float? = null, val color: Color? = null) : BoardToolMode
     data class Shape(
-        val type: ShapeType,
-        val fill: Boolean,
-        val color: Color,
-        val strokeWidth: Int
+        val type: ShapeType? = null,
+        val fill: Boolean? = null,
+        val color: Color? = null,
+        val strokeWidth: Int? = null
     ) : BoardToolMode
 
     data object Text : BoardToolMode
-    data class Note(val color: Color) : BoardToolMode
+    data class Note(val color: Color? = null) : BoardToolMode
 }
 
 enum class ShapeType {
@@ -68,6 +71,8 @@ sealed interface BoardScreenEvent {
     ) : BoardScreenEvent
 
     data class SetToolMode(val mode: BoardToolMode) : BoardScreenEvent
+    data class ShowToolOptions(val mode: BoardToolMode) : BoardScreenEvent
+    data object HideToolOptions : BoardScreenEvent
 }
 
 @Immutable
@@ -110,7 +115,7 @@ class BoardViewModel(
     private val modifier: RemoteObjectModifier
 ) : ViewModel() {
 
-    val state = viewModelScope.launchMolecule(RecompositionMode.Immediate) {
+    val state = viewModelScope.launchMolecule(RecompositionMode.ContextClock, AndroidUiDispatcher.Main) {
         val objects by produceState(listOf<UiUObject>()) {
             val result = repository.allObjects()
             result.onSuccess {
@@ -134,9 +139,11 @@ class BoardViewModel(
             }
         }
         var toolMode by remember { mutableStateOf<BoardToolMode>(BoardToolMode.View) }
+        var showToolOptions by remember { mutableStateOf(false) }
         BoardScreenState(
             objects,
-            toolMode
+            toolMode,
+            showToolOptions
         ) { event ->
             when (event) {
                 is BoardScreenEvent.TransformObject -> modifyObject(
@@ -145,6 +152,11 @@ class BoardViewModel(
                 )
 
                 is BoardScreenEvent.SetToolMode -> toolMode = event.mode
+                BoardScreenEvent.HideToolOptions -> showToolOptions = false
+                is BoardScreenEvent.ShowToolOptions -> {
+                    showToolOptions = true
+                    toolMode = event.mode
+                }
             }
         }
     }

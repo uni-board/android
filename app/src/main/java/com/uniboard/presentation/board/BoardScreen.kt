@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +29,12 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uniboard.domain.RootModule
+import com.uniboard.presentation.board.components.BoardToolbar
+import com.uniboard.presentation.board.components.BoardToolbarEvent
 import com.uniboard.presentation.board.components.UObject
 import com.uniboard.presentation.board.components.transformable
 import com.uniboard.presentation.theme.UniboardTheme
@@ -50,11 +54,26 @@ fun RootModule.BoardScreen(id: String, modifier: Modifier = Modifier) {
 @Composable
 fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
     Scaffold(modifier, bottomBar = {
-        Button(onClick = {
-            state.eventSink(BoardScreenEvent.SetToolMode(if (state.toolMode is BoardToolMode.View) BoardToolMode.Edit else BoardToolMode.View))
-        }) {
-            Text(if (state.toolMode is BoardToolMode.View) "Edit" else "View")
-        }
+        BoardToolbar(state.toolMode, onSelect = { event ->
+            when (event) {
+                BoardToolbarEvent.HideOptions -> state.eventSink(BoardScreenEvent.HideToolOptions)
+                is BoardToolbarEvent.SelectMode -> state.eventSink(
+                    BoardScreenEvent.SetToolMode(
+                        event.mode
+                    )
+                )
+
+                is BoardToolbarEvent.ShowOptions -> state.eventSink(
+                    BoardScreenEvent.ShowToolOptions(
+                        event.mode
+                    )
+                )
+            }
+        },
+            Modifier
+                .padding(16.dp)
+                .navigationBarsPadding(),
+            showOptions = state.showToolOptions)
     }) { paddingValues ->
         var scale by remember { mutableFloatStateOf(1f) }
         var offset by remember { mutableStateOf(Offset.Zero) }
@@ -126,7 +145,8 @@ private fun BoardScreenPreview() {
                     )
                 ),
             ),
-            toolMode = BoardToolMode.View
+            toolMode = BoardToolMode.View,
+            false
         ) {})
     }
 }
