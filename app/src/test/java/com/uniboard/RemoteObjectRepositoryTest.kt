@@ -1,7 +1,7 @@
 package com.uniboard
 
-import com.uniboard.data.RemoteObjectRepositoryImpl
-import com.uniboard.domain.RemoteObjectRepository
+import com.uniboard.board.data.RemoteObjectRepositoryImpl
+import com.uniboard.board.domain.RemoteObjectRepository
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonPrimitive
 import org.http4k.core.Response
