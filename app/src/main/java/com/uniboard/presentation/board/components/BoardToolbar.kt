@@ -90,10 +90,18 @@ private fun BoardToolMode.toToolMode() =
 private val availableModes = mutableStateListOf(
     ToolMode(Icons.Default.Visibility, "View", BoardToolMode.View),
     ToolMode(Icons.Default.Edit, "Edit", BoardToolMode.Edit),
-    ToolMode(Icons.Default.Draw, "Pen", BoardToolMode.Pen()) { selected, onSelect, padding, modifier ->
+    ToolMode(
+        Icons.Default.Draw,
+        "Pen",
+        BoardToolMode.Pen()
+    ) { selected, onSelect, padding, modifier ->
         PenOptions(selected, onSelect, modifier, padding)
     },
-    ToolMode(Icons.Default.NoteAlt, "Note", BoardToolMode.Note()) { selected, onSelect, padding, modifier ->
+    ToolMode(
+        Icons.Default.NoteAlt,
+        "Note",
+        BoardToolMode.Note()
+    ) { selected, onSelect, padding, modifier ->
         NoteOptions(selected, onSelect, modifier, padding)
     },
     ToolMode(
@@ -129,9 +137,16 @@ fun BoardToolbar(
             ) { show ->
                 if (show && toolMode.options != null) {
                     Column(Modifier.fillMaxWidth()) {
-                        toolMode.options.invoke(selectedMode, {
-                            onSelect(BoardToolbarEvent.SelectMode(it))
-                        }, PaddingValues(horizontal = 16.dp), Modifier.fillMaxWidth().padding(top = 16.dp))
+                        toolMode.options.invoke(
+                            selectedMode,
+                            {
+                                onSelect(BoardToolbarEvent.SelectMode(it))
+                            },
+                            PaddingValues(horizontal = 16.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                        )
                         NavigationRailItem(
                             selected = true,
                             onClick = {
@@ -153,7 +168,10 @@ fun BoardToolbar(
                         )
                     }
                 } else {
-                    Row(Modifier.horizontalScroll(scrollState).padding(16.dp)) {
+                    Row(
+                        Modifier
+                            .horizontalScroll(scrollState)
+                            .padding(16.dp)) {
                         availableModes.forEach { mode ->
                             NavigationRailItem(
                                 selected = toolMode.name == mode.name,
@@ -185,7 +203,8 @@ private fun PenOptions(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ColorCarousel(
             selectedMode.color ?: Color.Black,
-            onSelect = { onSelect(selectedMode.copy(color = it)) }, padding = padding)
+            onSelect = { onSelect(selectedMode.copy(color = it)) }, padding = padding
+        )
         Slider(selectedMode.width ?: 5f, onValueChange = {
             onSelect(selectedMode.copy(width = it))
         }, valueRange = 5f..60f, modifier = Modifier.padding(padding))
@@ -292,7 +311,10 @@ private fun ShapeOptions(
     padding: PaddingValues = PaddingValues()
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(Modifier.horizontalScroll(rememberScrollState()).padding(padding)) {
+        Row(
+            Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(padding)) {
             val primary = MaterialTheme.colorScheme.primary
             shapes.forEach { shape ->
                 NavigationRailItem(
@@ -315,21 +337,22 @@ private fun ShapeOptions(
                 )
             }
         }
-        Row {
-            TextButton(onClick = {
-                onSelect(
-                    selectedMode.copy(
-                        fill = !(selectedMode.fill ?: true)
-                    )
+        TextButton(onClick = {
+            onSelect(
+                selectedMode.copy(
+                    fill = !(selectedMode.fill ?: true)
                 )
-            }) {
-                Icon(
-                    if (selectedMode.fill == true) Icons.Filled.Circle else Icons.Outlined.Circle,
-                    null
-                )
-                Text("Fill")
-            }
+            )
+        }) {
+            Icon(
+                if (selectedMode.fill == true) Icons.Filled.Circle else Icons.Outlined.Circle,
+                null
+            )
+            Text("Fill")
         }
+        Slider(selectedMode.strokeWidth ?: 10f, onValueChange = {
+            onSelect(selectedMode.copy(strokeWidth = it))
+        }, valueRange = 5f..60f)
         ColorCarousel(selectedMode.color ?: Color.Black, onSelect = {
             onSelect(selectedMode.copy(color = it))
         }, modifier, padding)

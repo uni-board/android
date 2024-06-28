@@ -1,5 +1,6 @@
 package com.uniboard.presentation.board
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -36,6 +37,7 @@ import com.uniboard.domain.RootModule
 import com.uniboard.presentation.board.components.BoardToolbar
 import com.uniboard.presentation.board.components.BoardToolbarEvent
 import com.uniboard.presentation.board.components.UObject
+import com.uniboard.presentation.board.components.UObjectCreator
 import com.uniboard.presentation.board.components.transformable
 import com.uniboard.presentation.theme.UniboardTheme
 import kotlinx.serialization.json.JsonObject
@@ -51,6 +53,7 @@ fun RootModule.BoardScreen(id: String, modifier: Modifier = Modifier) {
     BoardScreen(state, modifier)
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
     Scaffold(modifier, bottomBar = {
@@ -74,7 +77,7 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 .padding(16.dp)
                 .navigationBarsPadding(),
             showOptions = state.showToolOptions)
-    }) { paddingValues ->
+    }) {
         var scale by remember { mutableFloatStateOf(1f) }
         var offset by remember { mutableStateOf(Offset.Zero) }
         val transformState = rememberTransformableState { zoomChange, panChange, rotationChange ->
@@ -92,7 +95,6 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                     translationX = offset.x
                     translationY = offset.y
                 }
-                .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
         ) {
@@ -118,6 +120,9 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                         }
                 )
             }
+            UObjectCreator(state.toolMode, onCreate = {
+                state.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject()))
+            }, Modifier.fillMaxSize())
         }
     }
 }

@@ -9,6 +9,9 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.http4k.format.KotlinxSerialization.asJsonObject
+import org.http4k.format.KotlinxSerialization.asJsonValue
+import java.util.UUID
 
 object RemoteObject {
     private val json = Json {
@@ -36,6 +39,29 @@ object RemoteObject {
         )
     }
 
+    fun create(type: String, block: MutableMap<String, JsonElement>.() -> Unit): UObject {
+        val id = UUID.randomUUID()
+        val state = mutableMapOf<String, JsonElement>()
+        state.apply {
+            val uniboardData = JsonObject(
+                mapOf(
+                    "id" to id.toString().asJsonValue(),
+                    "type" to type.asJsonValue(),
+                    "persistedOnServer" to false.asJsonValue(),
+                )
+            )
+            this["uniboardData"] = uniboardData
+            this["type"] = type.asJsonValue()
+            this["version"] = "5.3.0".asJsonValue()
+        }
+        state.block()
+        return UObject(
+            id = id.toString(),
+            type = type,
+            state = state
+        )
+    }
+
     fun toUObjectFromDiff(oldObj: UObject, diff: Map<String, JsonElement>): UObject {
         return UObject(
             id = oldObj.id,
@@ -45,7 +71,8 @@ object RemoteObject {
     }
 
     fun idFromDiff(diff: Map<String, JsonElement>): String {
-        return diff["uniboardData"]?.jsonObject?.get("id")?.jsonPrimitive?.content ?: error("id is null")
+        return diff["uniboardData"]?.jsonObject?.get("id")?.jsonPrimitive?.content
+            ?: error("id is null")
     }
 
     fun toUObject(string: String): UObject {

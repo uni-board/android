@@ -21,12 +21,18 @@ import com.uniboard.domain.UObject
 import com.uniboard.domain.UObjectUpdate
 import com.uniboard.util.diffWith
 import com.uniboard.util.mutate
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
+import kotlin.properties.ReadOnlyProperty
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 fun RootModule.BoardViewModel(id: String) =
     BoardViewModel(remoteObjectRepository(id), remoteObjectModifier(id))
@@ -48,19 +54,19 @@ sealed interface BoardToolMode {
         val type: ShapeType? = null,
         val fill: Boolean? = null,
         val color: Color? = null,
-        val strokeWidth: Int? = null
+        val strokeWidth: Float? = null
     ) : BoardToolMode
 
     data object Text : BoardToolMode
     data class Note(val color: Color? = null) : BoardToolMode
 }
 
-enum class ShapeType {
-    Triangle,
-    Square,
-    Circle,
-    Oval,
-    Line
+enum class ShapeType(val remoteName: String) {
+    Triangle("triangle"),
+    Square("rect"),
+    Circle("ellipse"),
+    Oval("ellipse"),
+    Line("line")
 }
 
 @Immutable
@@ -73,6 +79,8 @@ sealed interface BoardScreenEvent {
     data class SetToolMode(val mode: BoardToolMode) : BoardScreenEvent
     data class ShowToolOptions(val mode: BoardToolMode) : BoardScreenEvent
     data object HideToolOptions : BoardScreenEvent
+
+    data class CreateObject(val obj: UiUObject) : BoardScreenEvent
 }
 
 @Immutable
@@ -115,51 +123,62 @@ class BoardViewModel(
     private val modifier: RemoteObjectModifier
 ) : ViewModel() {
 
-    val state = viewModelScope.launchMolecule(RecompositionMode.ContextClock, AndroidUiDispatcher.Main) {
-        val objects by produceState(listOf<UiUObject>()) {
-            val result = repository.allObjects()
-            result.onSuccess {
-                value = it.map(UObject::toUiUObject)
-            }
-            modifier.receive().collect { update ->
-                when (update) {
-                    is UObjectUpdate.Add -> value += update.obj.toUiUObject()
-                    is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
-                    is UObjectUpdate.Modify -> {
-                        val diffId = RemoteObject.idFromDiff(update.diff)
-                        value = value.map {
-                            if (it.id == diffId) {
-                                RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
-                                    .toUiUObject()
-                            } else it
+    private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
+    val state =
+        scope.launchMolecule(RecompositionMode.ContextClock) {
+            val objects by produceState(listOf<UiUObject>()) {
+                val result = repository.allObjects()
+                result.onSuccess {
+                    value = it.map(UObject::toUiUObject)
+                }
+                modifier.receive().collect { update ->
+                    when (update) {
+                        is UObjectUpdate.Add -> value += update.obj.toUiUObject()
+                        is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
+                        is UObjectUpdate.Modify -> {
+                            val diffId = RemoteObject.idFromDiff(update.diff)
+                            value = value.map {
+                                if (it.id == diffId) {
+                                    RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
+                                        .toUiUObject()
+                                } else it
+                            }
                         }
                     }
-                }
 
-            }
-        }
-        var toolMode by remember { mutableStateOf<BoardToolMode>(BoardToolMode.View) }
-        var showToolOptions by remember { mutableStateOf(false) }
-        BoardScreenState(
-            objects,
-            toolMode,
-            showToolOptions
-        ) { event ->
-            when (event) {
-                is BoardScreenEvent.TransformObject -> modifyObject(
-                    event.oldObj,
-                    event.obj
-                )
-
-                is BoardScreenEvent.SetToolMode -> toolMode = event.mode
-                BoardScreenEvent.HideToolOptions -> showToolOptions = false
-                is BoardScreenEvent.ShowToolOptions -> {
-                    showToolOptions = true
-                    toolMode = event.mode
                 }
             }
+            var toolMode by remember { mutableStateOf<BoardToolMode>(BoardToolMode.View) }
+            var showToolOptions by remember { mutableStateOf(false) }
+            BoardScreenState(
+                objects,
+                toolMode,
+                showToolOptions
+            ) { event ->
+                when (event) {
+                    is BoardScreenEvent.TransformObject -> modifyObject(
+                        event.oldObj,
+                        event.obj
+                    )
+
+                    is BoardScreenEvent.SetToolMode -> toolMode = event.mode
+                    BoardScreenEvent.HideToolOptions -> showToolOptions = false
+                    is BoardScreenEvent.ShowToolOptions -> {
+                        showToolOptions = true
+                        toolMode = event.mode
+                    }
+
+                    is BoardScreenEvent.CreateObject -> viewModelScope.launch {
+                        modifier.send(
+                            UObjectUpdate.Add(event.obj.toUObject())
+                        )
+                        showToolOptions = false
+                        delay(500)
+                        toolMode = BoardToolMode.Edit
+                    }
+                }
+            }
         }
-    }
 
     private fun modifyObject(
         oldObj: UiUObject,

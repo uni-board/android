@@ -32,12 +32,14 @@ class RemoteObjectModifierImpl(
         socket.emit("connected", id)
         socket.on("created") { added ->
             coroutineScope.launch {
+                println(added[0])
                 events.emit(UObjectUpdate.Add(RemoteObject.toUObject(added[0].toString())))
             }
         }
         socket.on("modified") { modified ->
             coroutineScope.launch {
                 val uobj = RemoteObject.toUObject(modified[0].toString())
+                println(uobj)
                 events.emit(
                     UObjectUpdate.Modify(
                         diff = uobj.state
@@ -47,6 +49,7 @@ class RemoteObjectModifierImpl(
         }
         socket.on("deleted") { deletedID ->
             coroutineScope.launch {
+                println(deletedID)
                 events.emit(UObjectUpdate.Delete(deletedID[0].toString()))
             }
         }
@@ -55,11 +58,16 @@ class RemoteObjectModifierImpl(
     override suspend fun send(update: UObjectUpdate): Result<Unit> = kotlin.runCatching {
         println(update)
         when (update) {
-            is UObjectUpdate.Add -> socket.emit("created", update.obj.state.toString())
+            is UObjectUpdate.Add -> {
+                socket.emit("created", Json.encodeToString(update.obj.state))
+                events.emit(UObjectUpdate.Add(update.obj))
+            }
+
             is UObjectUpdate.Modify -> socket.emit(
                 "modified",
                 Json.encodeToString(update.diff)
             )
+
             is UObjectUpdate.Delete -> socket.emit("deleted", update.id)
         }
         Unit
