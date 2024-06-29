@@ -2,7 +2,6 @@ package com.uniboard.board.presentation.board.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -16,13 +15,11 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import com.uniboard.board.presentation.board.ColorType
 import com.uniboard.board.presentation.board.UiUObject
 import com.uniboard.board.presentation.board.dpSize
-import com.uniboard.board.presentation.board.size
-import com.uniboard.core.presentation.components.AutoSizeText
 import com.uniboard.core.presentation.components.AutoSizeTextField
 import com.uniboard.core.presentation.rememberState
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -36,36 +33,30 @@ fun NoteObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier
     val color = remember(obj) {
         val colorStr =
             obj.state["uniboardData"]?.jsonObject?.get("stickerColor")?.jsonPrimitive?.content ?: ""
-        when (colorStr) {
-            "blue" -> Color.Blue
-            "green" -> Color.Green
-            "red" -> Color.Red
-            "yellow" -> Color.Yellow
-            else -> Color.Black
-        }
+        ColorType.entries.find { it.remoteName == colorStr }?.color ?: Color.Black
     }
     val textColor = remember(color) {
         if (color == Color.Black) Color.White
         else Color.Black
     }
-    Box(modifier.background(color)) {
-        var textState by rememberState(text) { text }
-        LaunchedEffect(textState) {
-            val data = obj.state["uniboardData"]?.jsonObject ?: JsonObject(mapOf())
-            onModify(
-                obj.copy(
-                    state = obj.state + ("uniboardData" to JsonObject(
-                        data + mapOf(
-                            "stickerText" to JsonPrimitive(
-                                textState
-                            )
+    var textState by rememberState(text) { text }
+    LaunchedEffect(textState) {
+        val data = obj.state["uniboardData"]?.jsonObject ?: JsonObject(mapOf())
+        onModify(
+            obj.copy(
+                state = obj.state + ("uniboardData" to JsonObject(
+                    data + mapOf(
+                        "stickerText" to JsonPrimitive(
+                            textState
                         )
-                    ))
-                )
+                    )
+                ))
             )
-        }
-        val density = LocalDensity.current
-        val size = obj.dpSize(density)
+        )
+    }
+    val density = LocalDensity.current
+    val size = obj.dpSize(density)
+    Box(modifier.background(color)) {
         AutoSizeTextField(
             value = textState,
             onValueChange = {

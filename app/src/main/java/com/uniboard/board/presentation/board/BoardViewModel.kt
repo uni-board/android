@@ -163,7 +163,6 @@ class BoardViewModel(
                             }
                         }
                     }
-
                 }
             }
             var showToolOptions by remember { mutableStateOf(false) }

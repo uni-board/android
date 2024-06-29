@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -99,7 +100,7 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 .fillMaxSize()
         ) {
             state.objects.forEach { obj ->
-                val transformedObj = obj.copy(editable = state.toolMode is BoardToolMode.Edit)
+                val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
                 UObject(transformedObj,
                     onModify = { newObj ->
                         state.eventSink(BoardScreenEvent.TransformObject(transformedObj, newObj))
