@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
@@ -127,12 +128,10 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                                 )
                             )
                         }
-                        .clickable(
-                            enabled = state.toolMode is BoardToolMode.Delete,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                        .pointerInput(Unit) {
+                            detectTapGestures {
+                                state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                            }
                         }
                 )
             }
