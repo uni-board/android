@@ -94,10 +94,11 @@ data class UiUObject(
     val scaleX: Float = 1f,
     val scaleY: Float = 1f,
     val angle: Float = 0f,
+    val editable: Boolean = false,
     val state: Map<String, JsonElement>
 )
 
-fun UObject.toUiUObject() =
+fun UObject.toUiUObject(editable: Boolean = false) =
     UiUObject(
         id = id,
         type = type,
@@ -108,6 +109,7 @@ fun UObject.toUiUObject() =
         scaleX = state["scaleX"]?.jsonPrimitive?.content?.toFloat() ?: 1f,
         scaleY = state["scaleY"]?.jsonPrimitive?.content?.toFloat() ?: 1f,
         angle = state["angle"]?.jsonPrimitive?.content?.toFloat() ?: 0f,
+        editable = editable,
         state = state
     )
 
@@ -126,10 +128,11 @@ class BoardViewModel(
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
     val state =
         scope.launchMolecule(RecompositionMode.ContextClock) {
+            var toolMode by remember { mutableStateOf<BoardToolMode>(BoardToolMode.View) }
             val objects by produceState(listOf<UiUObject>()) {
                 val result = repository.allObjects()
-                result.onSuccess {
-                    value = it.map(UObject::toUiUObject)
+                result.onSuccess { objects ->
+                    value = objects.map { it.toUiUObject() }
                 }
                 modifier.receive().collect { update ->
                     when (update) {
@@ -140,7 +143,7 @@ class BoardViewModel(
                             value = value.map {
                                 if (it.id == diffId) {
                                     RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
-                                        .toUiUObject()
+                                        .toUiUObject(toolMode is BoardToolMode.Edit)
                                 } else it
                             }
                         }
@@ -148,7 +151,6 @@ class BoardViewModel(
 
                 }
             }
-            var toolMode by remember { mutableStateOf<BoardToolMode>(BoardToolMode.View) }
             var showToolOptions by remember { mutableStateOf(false) }
             BoardScreenState(
                 objects,

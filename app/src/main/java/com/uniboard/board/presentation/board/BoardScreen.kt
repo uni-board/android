@@ -99,16 +99,20 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 .fillMaxSize()
         ) {
             state.objects.forEach { obj ->
-                UObject(obj,
+                val transformedObj = obj.copy(editable = state.toolMode is BoardToolMode.Edit)
+                UObject(transformedObj,
+                    onModify = { newObj ->
+                        state.eventSink(BoardScreenEvent.TransformObject(transformedObj, newObj))
+                    },
                     Modifier
                         .transformable(
-                            obj,
+                            transformedObj,
                             enabled = state.toolMode is BoardToolMode.Edit
                         ) { scaleX, scaleY, rotation, offset ->
                             state.eventSink(
                                 BoardScreenEvent.TransformObject(
                                     obj,
-                                    obj.copy(
+                                    transformedObj.copy(
                                         scaleX = scaleX,
                                         scaleY = scaleY,
                                         angle = rotation,
@@ -121,7 +125,7 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 )
             }
             UObjectCreator(state.toolMode, onCreate = {
-                state.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject()))
+                state.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(state.toolMode is BoardToolMode.Edit)))
             }, Modifier.fillMaxSize())
         }
     }

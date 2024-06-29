@@ -272,7 +272,7 @@ fun AutoSizeText(
     }
 }
 
-private fun BoxWithConstraintsScope.shouldShrink(
+internal fun BoxWithConstraintsScope.shouldShrink(
     text: AnnotatedString,
     textStyle: TextStyle,
     maxLines: Int,
@@ -295,7 +295,7 @@ private fun BoxWithConstraintsScope.shouldShrink(
 
 @Stable
 @Composable
-private fun rememberCandidateFontSizesIntProgress(
+internal fun rememberCandidateFontSizesIntProgress(
     density: Density,
     dpSize: DpSize,
     minTextSize: TextUnit = TextUnit.Unspecified,
@@ -348,7 +348,7 @@ fun <T> List<T>.findElectedValue(shouldMoveBackward: (T) -> Boolean) = run {
 }
 
 // This function works by using a binary search algorithm
-private fun <T> IntProgression.findElectedValue(
+internal fun <T> IntProgression.findElectedValue(
     transform: (Int) -> T,
     shouldMoveBackward: (T) -> Boolean,
 ) = run {
