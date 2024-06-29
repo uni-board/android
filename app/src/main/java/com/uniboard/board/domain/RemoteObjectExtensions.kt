@@ -51,7 +51,7 @@ object RemoteObject {
                 )
             )
             this["uniboardData"] = uniboardData
-            this["type"] = type.asJsonValue()
+            this["type"] = JsonPrimitive(if (type.startsWith("uniboard")) "group" else type)
             this["version"] = "5.3.0".asJsonValue()
         }
         state.block()

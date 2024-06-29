@@ -10,6 +10,6 @@ fun UObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier = 
         "textbox" -> TextObject(obj, onModify, modifier)
         "path" -> PathObject(obj, modifier)
         "triangle", "line", "ellipse", "rect" -> CustomPathObject(obj, modifier)
-        "uniboard/stickyNote" -> NoteObject(obj, modifier)
+        "uniboard/stickyNote" -> NoteObject(obj, onModify, modifier)
     }
 }

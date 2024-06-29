@@ -68,6 +68,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uniboard.board.presentation.board.BoardToolMode
+import com.uniboard.board.presentation.board.ColorType
 import com.uniboard.board.presentation.board.ShapeType
 import com.uniboard.core.presentation.theme.UniboardTheme
 
@@ -214,30 +215,29 @@ private fun PenOptions(
     }
 }
 
+private val defaultColors = listOf(
+    Color.Red,
+    Color.Yellow,
+    Color.Green,
+    Color.Blue,
+    Color.Cyan,
+    Color.Black,
+    Color.DarkGray,
+    Color.Gray,
+    Color.LightGray,
+    Color.Magenta,
+    Color.White
+)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ColorCarousel(
     selectedColor: Color,
     onSelect: (Color) -> Unit,
     modifier: Modifier = Modifier,
-    padding: PaddingValues = PaddingValues()
+    padding: PaddingValues = PaddingValues(),
+    colors: List<Color> =  defaultColors
 ) {
-    val colors = remember {
-        listOf(
-            Color.Red,
-            Color.Yellow,
-            Color.Green,
-            Color.Blue,
-            Color.Cyan,
-            Color.Black,
-            Color.DarkGray,
-            Color.Gray,
-            Color.LightGray,
-            Color.Magenta,
-            Color.White
-        )
-    }
-    val state = rememberCarouselState { colors.size }
+   val state = rememberCarouselState { colors.size }
     HorizontalUncontainedCarousel(
         state,
         modifier = modifier.fillMaxWidth(),
@@ -283,9 +283,9 @@ private fun NoteOptions(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues()
 ) {
-    ColorCarousel(selectedMode.color ?: Color.Black, onSelect = {
-        onSelect(BoardToolMode.Note(it))
-    }, modifier, padding)
+    ColorCarousel(selectedMode.color?.color?: Color.Black, onSelect = { color ->
+        onSelect(BoardToolMode.Note(ColorType.entries.first { it.color == color }))
+    }, modifier, padding, colors = remember { ColorType.entries.map { it.color } })
 }
 
 private data class Shape(
@@ -409,7 +409,7 @@ private fun PenOptionsPreview() {
 @Composable
 private fun NoteOptionsPreview() {
     UniboardTheme {
-        NoteOptions(BoardToolMode.Note(Color.Black), onSelect = {
+        NoteOptions(BoardToolMode.Note(ColorType.Black), onSelect = {
 
         })
     }

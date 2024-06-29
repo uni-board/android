@@ -6,7 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +22,7 @@ import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObject
 import com.uniboard.board.domain.UObjectUpdate
+import com.uniboard.core.presentation.components.toDp
 import com.uniboard.util.diffWith
 import com.uniboard.util.mutate
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +62,7 @@ sealed interface BoardToolMode {
     ) : BoardToolMode
 
     data class Text(val color: Color? = null) : BoardToolMode
-    data class Note(val color: Color? = null) : BoardToolMode
+    data class Note(val color: ColorType? = null) : BoardToolMode
 }
 
 enum class ShapeType(val remoteName: String) {
@@ -67,6 +71,14 @@ enum class ShapeType(val remoteName: String) {
     Circle("ellipse"),
     Oval("ellipse"),
     Line("line")
+}
+
+enum class ColorType(val remoteName: String, val color: Color) {
+    Red("red", Color.Red),
+    Green("green", Color.Green),
+    Blue("blue", Color.Blue),
+    Yellow("yellow", Color.Yellow),
+    Black("black", Color.Black),
 }
 
 @Immutable
@@ -97,6 +109,9 @@ data class UiUObject(
     val editable: Boolean = false,
     val state: Map<String, JsonElement>
 )
+
+fun UiUObject.size(): Size? = if (width != null && height != null) Size(width.toFloat(), height.toFloat()) else null
+fun UiUObject.dpSize(density: Density): DpSize? = size()?.let { DpSize(density.toDp(it.width), density.toDp(it.height)) }
 
 fun UObject.toUiUObject(editable: Boolean = false) =
     UiUObject(
