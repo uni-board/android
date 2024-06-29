@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import com.uniboard.board.presentation.board.UiUObject
 import com.uniboard.board.presentation.board.util.parseAsRGBAColor
 import com.uniboard.core.presentation.components.AutoSizeTextField
+import com.uniboard.core.presentation.rememberState
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -25,7 +26,7 @@ fun TextObject(obj: UiUObject, onEdit: (UiUObject) -> Unit, modifier: Modifier =
     val text = remember(obj) {
         obj.state["text"]?.jsonPrimitive?.content ?: ""
     }
-    var textState by remember(text) { mutableStateOf(text) }
+    var textState by rememberState(text) { text }
     LaunchedEffect(textState) {
         onEdit(obj.copy(state = obj.state + ("text" to JsonPrimitive(textState))))
     }

@@ -15,7 +15,7 @@ fun UObjectCreator(
         is BoardToolMode.Note -> NoteObjectCreator(onCreate, modifier)
         is BoardToolMode.Pen -> PathObjectCreator(mode, onCreate, modifier)
         is BoardToolMode.Shape -> CustomPathObjectCreator(mode, onCreate, modifier)
-        BoardToolMode.Text -> TextObjectCreator(onCreate, modifier)
+        is BoardToolMode.Text -> TextObjectCreator(mode, onCreate, modifier)
         else -> {}
     }
 }

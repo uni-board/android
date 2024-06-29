@@ -111,7 +111,9 @@ private val availableModes = mutableStateListOf(
     ) { selected, onSelect, padding, modifier ->
         ShapeOptions(selected, onSelect, modifier, padding)
     },
-    ToolMode(Icons.Default.TextFields, "Text", BoardToolMode.Text)
+    ToolMode(Icons.Default.TextFields, "Text", BoardToolMode.Text()) { selected, onSelect, padding, modifier ->
+        TextOptions(selected, onSelect, modifier, padding)
+    }
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -171,7 +173,8 @@ fun BoardToolbar(
                     Row(
                         Modifier
                             .horizontalScroll(scrollState)
-                            .padding(16.dp)) {
+                            .padding(16.dp)
+                    ) {
                         availableModes.forEach { mode ->
                             NavigationRailItem(
                                 selected = toolMode.name == mode.name,
@@ -314,7 +317,8 @@ private fun ShapeOptions(
         Row(
             Modifier
                 .horizontalScroll(rememberScrollState())
-                .padding(padding)) {
+                .padding(padding)
+        ) {
             val primary = MaterialTheme.colorScheme.primary
             shapes.forEach { shape ->
                 NavigationRailItem(
@@ -357,6 +361,18 @@ private fun ShapeOptions(
             onSelect(selectedMode.copy(color = it))
         }, modifier, padding)
     }
+}
+
+@Composable
+fun TextOptions(
+    selectedMode: BoardToolMode.Text,
+    onSelect: (BoardToolMode.Text) -> Unit,
+    modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues()
+) {
+    ColorCarousel(selectedMode.color ?: Color.Black, onSelect = {
+        onSelect(selectedMode.copy(color = it))
+    }, modifier = modifier, padding = padding)
 }
 
 @Preview

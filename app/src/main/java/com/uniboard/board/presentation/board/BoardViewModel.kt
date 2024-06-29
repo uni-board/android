@@ -57,7 +57,7 @@ sealed interface BoardToolMode {
         val strokeWidth: Float? = null
     ) : BoardToolMode
 
-    data object Text : BoardToolMode
+    data class Text(val color: Color? = null) : BoardToolMode
     data class Note(val color: Color? = null) : BoardToolMode
 }
 
