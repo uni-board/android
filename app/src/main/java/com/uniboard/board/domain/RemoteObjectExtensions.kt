@@ -34,7 +34,11 @@ object RemoteObject {
 
     fun createDiff(oldObj: UObject, obj: UObject): Map<String, JsonElement> {
         return obj.state.diffWith(oldObj.state) + mapOf(
-            "uniboardData" to (obj.state["uniboardData"] ?: JsonNull),
+            "uniboardData" to JsonObject(
+                oldObj.state["uniboardData"]?.jsonObject?.plus(
+                    obj.state["uniboardData"]?.jsonObject ?: mapOf()
+                ) ?: mapOf()
+            ),
             "selectable" to JsonPrimitive(true)
         )
     }

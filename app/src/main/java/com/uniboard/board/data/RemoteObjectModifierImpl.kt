@@ -63,10 +63,13 @@ class RemoteObjectModifierImpl(
                 events.emit(UObjectUpdate.Add(update.obj))
             }
 
-            is UObjectUpdate.Modify -> socket.emit(
-                "modified",
-                Json.encodeToString(update.diff)
-            )
+            is UObjectUpdate.Modify -> {
+                socket.emit(
+                    "modified",
+                    Json.encodeToString(update.diff)
+                )
+                events.emit(UObjectUpdate.Modify(update.diff))
+            }
 
             is UObjectUpdate.Delete -> socket.emit("deleted", update.id)
         }

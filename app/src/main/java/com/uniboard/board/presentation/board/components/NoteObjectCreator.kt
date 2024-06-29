@@ -33,8 +33,8 @@ fun NoteObjectCreator(
                 )
                 this["top"] = JsonPrimitive(offset.y)
                 this["left"] = JsonPrimitive(offset.x)
-                this["width"] = JsonPrimitive(100)
-                this["height"] = JsonPrimitive(100)
+                this["width"] = JsonPrimitive(420)
+                this["height"] = JsonPrimitive(420)
             })
         }
     })
