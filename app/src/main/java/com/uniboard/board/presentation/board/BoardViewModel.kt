@@ -63,6 +63,7 @@ sealed interface BoardToolMode {
 
     data class Text(val color: Color? = null) : BoardToolMode
     data class Note(val color: ColorType? = null) : BoardToolMode
+    data object Delete: BoardToolMode
 }
 
 enum class ShapeType(val remoteName: String) {
@@ -93,6 +94,7 @@ sealed interface BoardScreenEvent {
     data object HideToolOptions : BoardScreenEvent
 
     data class CreateObject(val obj: UiUObject) : BoardScreenEvent
+    data class DeleteObject(val id: String): BoardScreenEvent
 }
 
 @Immutable
@@ -191,6 +193,10 @@ class BoardViewModel(
                         showToolOptions = false
                         delay(500)
                         toolMode = BoardToolMode.Edit
+                    }
+
+                    is BoardScreenEvent.DeleteObject -> viewModelScope.launch {
+                        modifier.send(UObjectUpdate.Delete(event.id))
                     }
                 }
             }

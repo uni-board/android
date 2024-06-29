@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChangeHistory
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Minimize
@@ -91,6 +92,7 @@ private fun BoardToolMode.toToolMode() =
 private val availableModes = mutableStateListOf(
     ToolMode(Icons.Default.Visibility, "View", BoardToolMode.View),
     ToolMode(Icons.Default.Edit, "Edit", BoardToolMode.Edit),
+    ToolMode(Icons.Default.Delete, "Delete", BoardToolMode.Delete),
     ToolMode(
         Icons.Default.Draw,
         "Pen",

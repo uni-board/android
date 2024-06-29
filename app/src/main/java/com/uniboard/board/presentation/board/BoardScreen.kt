@@ -2,11 +2,13 @@ package com.uniboard.board.presentation.board
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -58,26 +60,28 @@ fun RootModule.BoardScreen(id: String, modifier: Modifier = Modifier) {
 @Composable
 fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
     Scaffold(modifier, bottomBar = {
-        BoardToolbar(state.toolMode, onSelect = { event ->
-            when (event) {
-                BoardToolbarEvent.HideOptions -> state.eventSink(BoardScreenEvent.HideToolOptions)
-                is BoardToolbarEvent.SelectMode -> state.eventSink(
-                    BoardScreenEvent.SetToolMode(
-                        event.mode
+        BoardToolbar(
+            state.toolMode, onSelect = { event ->
+                when (event) {
+                    BoardToolbarEvent.HideOptions -> state.eventSink(BoardScreenEvent.HideToolOptions)
+                    is BoardToolbarEvent.SelectMode -> state.eventSink(
+                        BoardScreenEvent.SetToolMode(
+                            event.mode
+                        )
                     )
-                )
 
-                is BoardToolbarEvent.ShowOptions -> state.eventSink(
-                    BoardScreenEvent.ShowToolOptions(
-                        event.mode
+                    is BoardToolbarEvent.ShowOptions -> state.eventSink(
+                        BoardScreenEvent.ShowToolOptions(
+                            event.mode
+                        )
                     )
-                )
-            }
-        },
+                }
+            },
             Modifier
                 .padding(16.dp)
                 .navigationBarsPadding(),
-            showOptions = state.showToolOptions)
+            showOptions = state.showToolOptions
+        )
     }) {
         var scale by remember { mutableFloatStateOf(1f) }
         var offset by remember { mutableStateOf(Offset.Zero) }
@@ -122,6 +126,13 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                                     )
                                 )
                             )
+                        }
+                        .clickable(
+                            enabled = state.toolMode is BoardToolMode.Delete,
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
                         }
                 )
             }

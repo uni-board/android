@@ -56,24 +56,12 @@ class RemoteObjectModifierImpl(
     }
 
     override suspend fun send(update: UObjectUpdate): Result<Unit> = kotlin.runCatching {
-        println(update)
         when (update) {
-            is UObjectUpdate.Add -> {
-                socket.emit("created", Json.encodeToString(update.obj.state))
-                events.emit(UObjectUpdate.Add(update.obj))
-            }
-
-            is UObjectUpdate.Modify -> {
-                socket.emit(
-                    "modified",
-                    Json.encodeToString(update.diff)
-                )
-                events.emit(UObjectUpdate.Modify(update.diff))
-            }
-
+            is UObjectUpdate.Add -> socket.emit("created", Json.encodeToString(update.obj.state))
+            is UObjectUpdate.Modify -> socket.emit("modified", Json.encodeToString(update.diff))
             is UObjectUpdate.Delete -> socket.emit("deleted", update.id)
         }
-        Unit
+        events.emit(update)
     }.onFailure { it.printStackTrace() }
 
     override fun receive(): Flow<UObjectUpdate> {
