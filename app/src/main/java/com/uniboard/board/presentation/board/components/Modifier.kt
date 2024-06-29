@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
 import com.uniboard.board.presentation.board.UiUObject
+import com.uniboard.core.presentation.rememberState
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -27,16 +28,13 @@ fun Modifier.transformable(
     enabled: Boolean = true,
     onEnd: (scaleX: Float, scaleY: Float, rotation: Float, offset: IntOffset) -> Unit
 ) = composed {
-    var scaleX by remember(obj.scaleX) { mutableFloatStateOf(obj.scaleX) }
-    var scaleY by remember(obj.scaleY) { mutableFloatStateOf(obj.scaleY) }
-    var rotation by remember(obj.angle) { mutableFloatStateOf(obj.angle) }
-    var offset by remember(obj.left, obj.top) {
-        println("Created new offset")
-        mutableStateOf(
-            Offset(
-                obj.left.toFloat(),
-                obj.top.toFloat()
-            )
+    var scaleX by rememberState(obj.scaleX) { obj.scaleX }
+    var scaleY by rememberState(obj.scaleY) { obj.scaleY }
+    var rotation by rememberState(obj.angle) { obj.angle }
+    var offset by rememberState(obj.left, obj.top) {
+        Offset(
+            obj.left.toFloat(),
+            obj.top.toFloat()
         )
     }
     layout { measurable, constraints ->
