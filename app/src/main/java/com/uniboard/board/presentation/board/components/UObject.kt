@@ -11,5 +11,6 @@ fun UObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier = 
         "path" -> PathObject(obj, modifier)
         "triangle", "line", "ellipse", "rect" -> CustomPathObject(obj, modifier)
         "uniboard/stickyNote" -> NoteObject(obj, onModify, modifier)
+        "uniboard/image" -> ImageObject(obj, modifier)
     }
 }

@@ -2,22 +2,16 @@ package com.uniboard.board.presentation.board
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,14 +22,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.round
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.presentation.board.components.BoardToolbar
@@ -46,9 +37,6 @@ import com.uniboard.board.presentation.board.components.transformable
 import com.uniboard.core.presentation.theme.UniboardTheme
 import kotlinx.serialization.json.JsonObject
 import org.http4k.format.KotlinxSerialization.asJsonValue
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 
 @Composable
 fun RootModule.BoardScreen(id: String, modifier: Modifier = Modifier) {
@@ -130,7 +118,9 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                         }
                         .pointerInput(Unit) {
                             detectTapGestures {
-                                state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                                if (state.toolMode is BoardToolMode.Delete) {
+                                    state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                                }
                             }
                         }
                 )

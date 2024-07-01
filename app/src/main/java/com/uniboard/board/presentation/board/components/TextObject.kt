@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import com.uniboard.board.presentation.board.UiUObject
@@ -38,6 +39,7 @@ fun TextObject(obj: UiUObject, onEdit: (UiUObject) -> Unit, modifier: Modifier =
         modifier = modifier,
         textStyle = TextStyle(color = color),
         enabled = obj.editable,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        cursorBrush = SolidColor(color)
     )
 }

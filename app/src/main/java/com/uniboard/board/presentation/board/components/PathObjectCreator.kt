@@ -76,18 +76,22 @@ fun PathObjectCreator(
 
 
     Canvas(modifier = drawModifier) {
+        println("CURRENT=$currentPosition")
         when (motionEvent) {
             ACTION_DOWN -> {
+                println("MOVE $currentPosition")
                 path.moveTo(currentPosition.x, currentPosition.y)
             }
 
             ACTION_MOVE -> {
                 if (currentPosition != Offset.Unspecified) {
+                    println("LINE $currentPosition")
                     path.lineTo(currentPosition.x, currentPosition.y)
                 }
             }
 
             ACTION_UP -> {
+                println("CREATE $currentPosition")
                 path.lineTo(currentPosition.x, currentPosition.y)
                 onCreate(path.createUObject(color, width))
                 motionEvent = ACTION_IDLE

@@ -16,7 +16,7 @@ class RootModuleImpl: RootModule {
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     })
-    private val baseUrl = "https://api.uniboard-api.freemyip.com"
+    override val baseUrl = "https://api.uniboard-api.freemyip.com"
     private val httpClient = ClientFilters.SetBaseUriFrom(Uri.of(baseUrl)).then(ApacheClient())
     override fun remoteObjectRepository(id: String): RemoteObjectRepository {
         return RemoteObjectRepositoryImpl(id, httpClient)

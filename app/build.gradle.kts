@@ -81,6 +81,7 @@ dependencies {
 
     implementation(libs.androidx.viewmodel)
     implementation(libs.molecule)
+    implementation(libs.coil)
 
     implementation(libs.socketio)
 
