@@ -236,10 +236,10 @@ class BoardViewModel(
             var showToolOptions by remember { mutableStateOf(false) }
             var showMore by remember { mutableStateOf(false) }
             BoardScreenState(
-                objects = objects,
-                toolMode = toolModes[currentToolMode] ?: BoardToolMode.View,
-                showToolOptions = showToolOptions,
-                showMore = showMore
+                objects,
+                toolModes[currentToolMode] ?: BoardToolMode.View,
+                showToolOptions,
+                showMore
             ) { event ->
                 when (event) {
                     is BoardScreenEvent.TransformObject -> modifyObject(
