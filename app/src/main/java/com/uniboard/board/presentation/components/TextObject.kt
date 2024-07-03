@@ -1,10 +1,9 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -12,8 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import com.uniboard.board.presentation.board.UiUObject
-import com.uniboard.board.presentation.board.util.parseAsRGBAColor
+import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.util.parseAsRGBAColor
 import com.uniboard.core.presentation.components.AutoSizeTextField
 import com.uniboard.core.presentation.rememberState
 import kotlinx.serialization.json.JsonPrimitive

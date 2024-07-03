@@ -1,9 +1,9 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.uniboard.board.domain.UObject
-import com.uniboard.board.presentation.board.BoardToolMode
+import com.uniboard.board.presentation.BoardToolMode
 
 @Composable
 fun UObjectCreator(

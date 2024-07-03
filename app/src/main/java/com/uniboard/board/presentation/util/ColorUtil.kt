@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.util
+package com.uniboard.board.presentation.util
 
 import androidx.compose.ui.graphics.Color
 

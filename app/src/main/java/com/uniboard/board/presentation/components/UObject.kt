@@ -1,8 +1,8 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.uniboard.board.presentation.board.UiUObject
+import com.uniboard.board.presentation.UiUObject
 
 @Composable
 fun UObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier = Modifier) {

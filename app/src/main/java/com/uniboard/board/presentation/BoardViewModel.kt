@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board
+package com.uniboard.board.presentation
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -189,7 +189,10 @@ class BoardViewModel(
                 mutableStateMapOf(
                     BoardToolMode.View::class to BoardToolMode.View,
                     BoardToolMode.Edit::class to BoardToolMode.Edit,
-                    BoardToolMode.Pen:: class to BoardToolMode.Pen(width = 10f, color = Color.Black),
+                    BoardToolMode.Pen:: class to BoardToolMode.Pen(
+                        width = 10f,
+                        color = Color.Black
+                    ),
                     BoardToolMode.Shape::class to BoardToolMode.Shape(
                         color = Color.Green,
                         fill = true,
@@ -201,7 +204,8 @@ class BoardViewModel(
                     BoardToolMode.Delete::class to BoardToolMode.Delete
                 )
             }
-            var currentToolMode by remember { mutableStateOf<KClass<out BoardToolMode>>(BoardToolMode.View::class) }
+            var currentToolMode by remember { mutableStateOf<KClass<out BoardToolMode>>(
+                BoardToolMode.View::class) }
             val objects by produceState(listOf<UiUObject>()) {
                 val result = repository.allObjects()
                 result.onSuccess { objects ->

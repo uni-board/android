@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.UObject
-import com.uniboard.board.presentation.board.BoardToolMode
-import com.uniboard.board.presentation.board.util.asCSSString
+import com.uniboard.board.presentation.BoardToolMode
+import com.uniboard.board.presentation.util.asCSSString
 import com.uniboard.core.presentation.rememberState
 import com.uniboard.core.presentation.theme.UniboardTheme
 import kotlinx.serialization.json.JsonElement

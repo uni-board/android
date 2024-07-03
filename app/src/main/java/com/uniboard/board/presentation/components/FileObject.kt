@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.uniboard.board.presentation.board.UiUObject
+import com.uniboard.board.presentation.UiUObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 

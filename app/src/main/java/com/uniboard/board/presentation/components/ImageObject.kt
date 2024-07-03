@@ -1,10 +1,10 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import coil.compose.AsyncImage
-import com.uniboard.board.presentation.board.UiUObject
+import com.uniboard.board.presentation.UiUObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 

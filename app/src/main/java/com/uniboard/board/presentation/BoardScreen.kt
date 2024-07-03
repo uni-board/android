@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board
+package com.uniboard.board.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -29,12 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uniboard.board.domain.RootModule
-import com.uniboard.board.presentation.board.components.BoardToolbar
-import com.uniboard.board.presentation.board.components.BoardToolbarEvent
-import com.uniboard.board.presentation.board.components.UObject
-import com.uniboard.board.presentation.board.components.UObjectCreator
-import com.uniboard.board.presentation.board.components.transformable
+import com.uniboard.board.presentation.components.BoardToolbar
+import com.uniboard.board.presentation.components.BoardToolbarEvent
+import com.uniboard.board.presentation.components.UObject
+import com.uniboard.board.presentation.components.UObjectCreator
+import com.uniboard.board.presentation.components.transformable
 import com.uniboard.core.presentation.theme.UniboardTheme
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import org.http4k.format.KotlinxSerialization.asJsonValue
 
@@ -44,6 +45,9 @@ fun RootModule.BoardScreen(id: String, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     BoardScreen(state, modifier)
 }
+
+@Serializable
+data class BoardDestination(val id: String)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -97,7 +101,12 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
                 UObject(transformedObj,
                     onModify = { newObj ->
-                        updatedState.eventSink(BoardScreenEvent.TransformObject(transformedObj, newObj))
+                        updatedState.eventSink(
+                            BoardScreenEvent.TransformObject(
+                                transformedObj,
+                                newObj
+                            )
+                        )
                     },
                     Modifier
                         .transformable(
@@ -121,7 +130,11 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                         .pointerInput(Unit) {
                             detectTapGestures {
                                 if (updatedState.toolMode is BoardToolMode.Delete) {
-                                    updatedState.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                                    updatedState.eventSink(
+                                        BoardScreenEvent.DeleteObject(
+                                            transformedObj.id
+                                        )
+                                    )
                                 }
                             }
                         }

@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.UObject
-import com.uniboard.board.presentation.board.BoardToolMode
-import com.uniboard.board.presentation.board.util.asCSSString
+import com.uniboard.board.presentation.BoardToolMode
+import com.uniboard.board.presentation.util.asCSSString
 import kotlinx.serialization.json.JsonPrimitive
 
 

@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.toPath
-import com.uniboard.board.presentation.board.UiUObject
-import com.uniboard.board.presentation.board.util.parseAsRGBAColor
+import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.util.parseAsRGBAColor
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 

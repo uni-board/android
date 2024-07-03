@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import com.uniboard.board.presentation.board.ColorType
-import com.uniboard.board.presentation.board.UiUObject
-import com.uniboard.board.presentation.board.dpSize
+import com.uniboard.board.presentation.ColorType
+import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.dpSize
 import com.uniboard.core.presentation.components.AutoSizeTextField
 import com.uniboard.core.presentation.rememberState
 import kotlinx.serialization.json.JsonObject

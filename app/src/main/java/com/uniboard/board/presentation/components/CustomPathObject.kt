@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.uniboard.board.presentation.board.UiUObject
-import com.uniboard.board.presentation.board.util.parseAsRGBAColor
+import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.util.parseAsRGBAColor
 import com.uniboard.core.presentation.theme.UniboardTheme
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive

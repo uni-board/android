@@ -43,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -80,6 +81,11 @@ dependencies {
     implementation(libs.http4k.serialization)
 
     implementation(libs.androidx.viewmodel)
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.fragment.compose)
+    implementation(libs.material)
+    implementation(libs.androidx.navigation.compose)
+
     implementation(libs.molecule)
     implementation(libs.coil)
 

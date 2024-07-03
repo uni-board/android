@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,9 +17,9 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.UObject
-import com.uniboard.board.presentation.board.BoardToolMode
-import com.uniboard.board.presentation.board.ShapeType
-import com.uniboard.board.presentation.board.util.asCSSString
+import com.uniboard.board.presentation.BoardToolMode
+import com.uniboard.board.presentation.ShapeType
+import com.uniboard.board.presentation.util.asCSSString
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.math.abs
 

@@ -1,4 +1,4 @@
-package com.uniboard.board.presentation.board.components
+package com.uniboard.board.presentation.components
 
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
-import com.uniboard.board.presentation.board.UiUObject
+import com.uniboard.board.presentation.UiUObject
 import com.uniboard.core.presentation.rememberState
 import kotlin.math.PI
 import kotlin.math.cos
