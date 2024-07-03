@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -60,16 +61,23 @@ fun PathObject(obj: UiUObject, modifier: Modifier = Modifier) {
 
 private fun createPathFor(obj: UiUObject): Path {
     val pathArray = requireNotNull(obj.state["path"]?.jsonArray) { "Path not found: $obj" }
-        .map { it.jsonArray }
+        .map { array -> array.jsonArray.map { it.jsonPrimitive.content } }
+    val initialOffset = Offset(obj.left.toFloat(), obj.top.toFloat())
+    val path = createPath(pathArray, initialOffset)
+    val bounds = path.getBounds()
+    val offset = Offset(bounds.left, bounds.top)
+    path.translate(-offset)
+    return path
+}
+
+private fun createPath(pathArray: List<List<Any>>, offset: Offset): Path {
     val pathString = pathArray.joinToString(" ") { element ->
-        element.mapIndexed { index, jsonElement ->
-            val content = jsonElement.jsonPrimitive.content
+        element.mapIndexed { index, content ->
             if (index > 0) {
-                val value = content.toFloat()
-                if (index % 2 == 0) value - obj.top else value - obj.left
+                val value = content.toString().toFloat()
+                if (index % 2 == 0) value - offset.y else value - offset.x
             } else content
         }.joinToString(" ")
     }
-    println(pathString)
     return addPathNodes(pathString).toPath()
 }
