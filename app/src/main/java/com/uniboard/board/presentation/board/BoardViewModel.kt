@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import com.uniboard.board.domain.FileDownloader
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
@@ -33,7 +34,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlin.reflect.KClass
 
 fun RootModule.BoardViewModel(id: String) =
-    BoardViewModel(baseUrl, remoteObjectRepository(id), remoteObjectModifier(id))
+    BoardViewModel(baseUrl, remoteObjectRepository(id), remoteObjectModifier(id), fileDownloader)
 
 @Immutable
 data class BoardScreenState(
@@ -177,7 +178,8 @@ fun UiUObject.toUObject() =
 class BoardViewModel(
     private val baseUrl: String,
     private val repository: RemoteObjectRepository,
-    private val modifier: RemoteObjectModifier
+    private val modifier: RemoteObjectModifier,
+    private val fileDownloader: FileDownloader
 ) : ViewModel() {
 
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)

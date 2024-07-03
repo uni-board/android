@@ -1,5 +1,7 @@
 package com.uniboard.board.data
 
+import android.content.Context
+import com.uniboard.board.domain.FileDownloader
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
@@ -12,7 +14,7 @@ import org.http4k.core.Uri
 import org.http4k.core.then
 import org.http4k.filter.ClientFilters
 
-class RootModuleImpl: RootModule {
+class RootModuleImpl(context: Context): RootModule {
     private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob() + CoroutineExceptionHandler { _, throwable ->
         throwable.printStackTrace()
     })
@@ -24,5 +26,9 @@ class RootModuleImpl: RootModule {
 
     override fun remoteObjectModifier(id: String): RemoteObjectModifier {
         return RemoteObjectModifierImpl(baseUrl, id, coroutineScope)
+    }
+
+    override val fileDownloader: FileDownloader by lazy {
+        FileDownloaderImpl(context, baseUrl, httpClient)
     }
 }

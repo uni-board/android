@@ -92,20 +92,21 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                 .background(MaterialTheme.colorScheme.background)
                 .fillMaxSize()
         ) {
+            val updatedState by rememberUpdatedState(state)
             state.objects.forEach { obj ->
                 val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
                 UObject(transformedObj,
                     onModify = { newObj ->
-                        state.eventSink(BoardScreenEvent.TransformObject(transformedObj, newObj))
+                        updatedState.eventSink(BoardScreenEvent.TransformObject(transformedObj, newObj))
                     },
                     Modifier
                         .transformable(
                             transformedObj,
-                            enabled = state.toolMode is BoardToolMode.Edit
+                            enabled = updatedState.toolMode is BoardToolMode.Edit
                         ) { scaleX, scaleY, rotation, offset ->
-                            state.eventSink(
+                            updatedState.eventSink(
                                 BoardScreenEvent.TransformObject(
-                                    obj,
+                                    transformedObj,
                                     transformedObj.copy(
                                         scaleX = scaleX,
                                         scaleY = scaleY,
@@ -116,17 +117,18 @@ fun BoardScreen(state: BoardScreenState, modifier: Modifier = Modifier) {
                                 )
                             )
                         }
+                        .border(1.dp, Color.Blue)
                         .pointerInput(Unit) {
                             detectTapGestures {
-                                if (state.toolMode is BoardToolMode.Delete) {
-                                    state.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
+                                if (updatedState.toolMode is BoardToolMode.Delete) {
+                                    updatedState.eventSink(BoardScreenEvent.DeleteObject(transformedObj.id))
                                 }
                             }
                         }
                 )
             }
-            UObjectCreator(state.toolMode, onCreate = {
-                state.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(state.toolMode is BoardToolMode.Edit)))
+            UObjectCreator(updatedState.toolMode, onCreate = {
+                updatedState.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(updatedState.toolMode is BoardToolMode.Edit)))
             }, Modifier.fillMaxSize())
         }
     }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -19,18 +20,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @Composable
 fun PathObject(obj: UiUObject, modifier: Modifier = Modifier) {
     val path = remember(obj) {
-        val pathArray = requireNotNull(obj.state["path"]?.jsonArray) { "Path not found: $obj" }
-            .map { it.jsonArray }
-        val pathString = pathArray.joinToString(" ") { element ->
-            element.mapIndexed { index, jsonElement ->
-                val content = jsonElement.jsonPrimitive.content
-                if (index > 0) {
-                    val value = content.toFloat()
-                    if (index % 2 == 0) value - obj.top else value - obj.left
-                } else content
-            }.joinToString(" ")
-        }
-        addPathNodes(pathString).toPath()
+        createPathFor(obj)
     }
     val strokeWidth = remember(obj) {
         obj.state["strokeWidth"]?.jsonPrimitive?.content?.toFloat() ?: 100f
@@ -66,4 +56,20 @@ fun PathObject(obj: UiUObject, modifier: Modifier = Modifier) {
                     )
                 )
             })
+}
+
+private fun createPathFor(obj: UiUObject): Path {
+    val pathArray = requireNotNull(obj.state["path"]?.jsonArray) { "Path not found: $obj" }
+        .map { it.jsonArray }
+    val pathString = pathArray.joinToString(" ") { element ->
+        element.mapIndexed { index, jsonElement ->
+            val content = jsonElement.jsonPrimitive.content
+            if (index > 0) {
+                val value = content.toFloat()
+                if (index % 2 == 0) value - obj.top else value - obj.left
+            } else content
+        }.joinToString(" ")
+    }
+    println(pathString)
+    return addPathNodes(pathString).toPath()
 }

@@ -61,6 +61,7 @@ class RemoteObjectModifierImpl(
             is UObjectUpdate.Modify -> socket.emit("modified", Json.encodeToString(update.diff))
             is UObjectUpdate.Delete -> socket.emit("deleted", update.id)
         }
+        println(update)
         events.emit(update)
     }.onFailure { it.printStackTrace() }
 

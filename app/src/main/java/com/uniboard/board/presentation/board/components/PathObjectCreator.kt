@@ -114,7 +114,7 @@ private fun Path.createUObject(color: Color, width: Float): UObject {
         this["top"] = JsonPrimitive(getBounds().top)
         this["left"] = JsonPrimitive(getBounds().left)
         this["width"] = JsonPrimitive(getBounds().right - getBounds().left)
-        this["bottom"] = JsonPrimitive(getBounds().bottom - getBounds().top)
+        this["height"] = JsonPrimitive(getBounds().bottom - getBounds().top)
         this["fill"] = JsonNull
         this["stroke"] = color.asCSSString().asJsonValue()
         this["strokeWidth"] = JsonPrimitive(width)

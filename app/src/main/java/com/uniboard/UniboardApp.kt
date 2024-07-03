@@ -5,5 +5,5 @@ import com.uniboard.board.data.RootModuleImpl
 import com.uniboard.board.domain.RootModule
 
 class UniboardApp: Application() {
-    val rootModule: RootModule by lazy { RootModuleImpl() }
+    val rootModule: RootModule by lazy { RootModuleImpl(this) }
 }
