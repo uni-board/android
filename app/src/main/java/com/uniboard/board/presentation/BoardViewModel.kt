@@ -41,6 +41,7 @@ data class BoardScreenState(
     val objects: List<UiUObject>,
     val toolMode: BoardToolMode,
     val showToolOptions: Boolean,
+    val showMore: Boolean,
     val eventSink: (BoardScreenEvent) -> Unit
 )
 
@@ -128,6 +129,8 @@ sealed interface BoardScreenEvent {
 
     data class CreateObject(val obj: UiUObject) : BoardScreenEvent
     data class DeleteObject(val id: String) : BoardScreenEvent
+
+    data class ShowMore(val show: Boolean): BoardScreenEvent
 }
 
 @Immutable
@@ -189,7 +192,7 @@ class BoardViewModel(
                 mutableStateMapOf(
                     BoardToolMode.View::class to BoardToolMode.View,
                     BoardToolMode.Edit::class to BoardToolMode.Edit,
-                    BoardToolMode.Pen:: class to BoardToolMode.Pen(
+                    BoardToolMode.Pen::class to BoardToolMode.Pen(
                         width = 10f,
                         color = Color.Black
                     ),
@@ -204,8 +207,11 @@ class BoardViewModel(
                     BoardToolMode.Delete::class to BoardToolMode.Delete
                 )
             }
-            var currentToolMode by remember { mutableStateOf<KClass<out BoardToolMode>>(
-                BoardToolMode.View::class) }
+            var currentToolMode by remember {
+                mutableStateOf<KClass<out BoardToolMode>>(
+                    BoardToolMode.View::class
+                )
+            }
             val objects by produceState(listOf<UiUObject>()) {
                 val result = repository.allObjects()
                 result.onSuccess { objects ->
@@ -228,10 +234,12 @@ class BoardViewModel(
                 }
             }
             var showToolOptions by remember { mutableStateOf(false) }
+            var showMore by remember { mutableStateOf(false) }
             BoardScreenState(
-                objects,
-                toolModes[currentToolMode] ?: BoardToolMode.View,
-                showToolOptions
+                objects = objects,
+                toolMode = toolModes[currentToolMode] ?: BoardToolMode.View,
+                showToolOptions = showToolOptions,
+                showMore = showMore
             ) { event ->
                 when (event) {
                     is BoardScreenEvent.TransformObject -> modifyObject(
@@ -244,7 +252,8 @@ class BoardViewModel(
                     is BoardScreenEvent.ShowToolOptions -> {
                         showToolOptions = true
                         currentToolMode = event.mode::class
-                        toolModes[event.mode::class] = toolModes[event.mode::class]!!.merge(event.mode)
+                        toolModes[event.mode::class] =
+                            toolModes[event.mode::class]!!.merge(event.mode)
                     }
 
                     is BoardScreenEvent.CreateObject -> viewModelScope.launch {
@@ -259,6 +268,8 @@ class BoardViewModel(
                     is BoardScreenEvent.DeleteObject -> viewModelScope.launch {
                         modifier.send(UObjectUpdate.Delete(event.id))
                     }
+
+                    is BoardScreenEvent.ShowMore -> showMore = event.show
                 }
             }
         }
