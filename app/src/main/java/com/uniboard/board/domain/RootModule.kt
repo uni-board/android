@@ -5,4 +5,5 @@ interface RootModule {
     fun remoteObjectModifier(id: String): RemoteObjectModifier
     val baseUrl: String
     val fileDownloader: FileDownloader
+    val pdfConverter: PdfConverter
 }

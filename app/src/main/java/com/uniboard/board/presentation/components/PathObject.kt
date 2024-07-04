@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.graphics.vector.toPath
 import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.UiUObjectApi
 import com.uniboard.board.presentation.util.parseAsRGBAColor
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive

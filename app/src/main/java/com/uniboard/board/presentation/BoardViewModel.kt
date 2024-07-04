@@ -7,34 +7,34 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.DpSize
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.uniboard.board.domain.FileDownloader
+import com.uniboard.board.domain.PdfConverter
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
-import com.uniboard.board.domain.UObject
 import com.uniboard.board.domain.UObjectUpdate
-import com.uniboard.core.presentation.components.toDp
 import com.uniboard.util.mutate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonPrimitive
 import kotlin.reflect.KClass
 
 fun RootModule.BoardViewModel(id: String) =
-    BoardViewModel(baseUrl, remoteObjectRepository(id), remoteObjectModifier(id), fileDownloader)
+    BoardViewModel(
+        baseUrl = baseUrl,
+        repository = remoteObjectRepository(id),
+        modifier = remoteObjectModifier(id),
+        fileDownloader = fileDownloader,
+        pdfConverter = pdfConverter
+    )
 
 @Immutable
 data class BoardScreenState(
@@ -130,59 +130,16 @@ sealed interface BoardScreenEvent {
     data class CreateObject(val obj: UiUObject) : BoardScreenEvent
     data class DeleteObject(val id: String) : BoardScreenEvent
 
-    data class ShowMore(val show: Boolean): BoardScreenEvent
+    data class ShowMore(val show: Boolean) : BoardScreenEvent
 }
 
-@Immutable
-data class UiUObject(
-    val id: String,
-    val type: String,
-    val top: Int = 0,
-    val left: Int = 0,
-    val width: Int? = null,
-    val height: Int? = null,
-    val scaleX: Float = 1f,
-    val scaleY: Float = 1f,
-    val angle: Float = 0f,
-    val editable: Boolean = false,
-    val baseUrl: String = "",
-    val state: Map<String, JsonElement>
-)
-
-fun UiUObject.size(): Size? =
-    if (width != null && height != null) Size(width.toFloat(), height.toFloat()) else null
-
-fun UiUObject.dpSize(density: Density): DpSize? =
-    size()?.let { DpSize(density.toDp(it.width), density.toDp(it.height)) }
-
-fun UObject.toUiUObject(editable: Boolean = false, baseUrl: String = "") =
-    UiUObject(
-        id = id,
-        type = type,
-        top = state["top"]?.jsonPrimitive?.content?.toFloat()?.toInt() ?: 0,
-        left = state["left"]?.jsonPrimitive?.content?.toFloat()?.toInt() ?: 0,
-        width = state["width"]?.jsonPrimitive?.content?.toFloat()?.toInt(),
-        height = state["height"]?.jsonPrimitive?.content?.toFloat()?.toInt(),
-        scaleX = state["scaleX"]?.jsonPrimitive?.content?.toFloat() ?: 1f,
-        scaleY = state["scaleY"]?.jsonPrimitive?.content?.toFloat() ?: 1f,
-        angle = state["angle"]?.jsonPrimitive?.content?.toFloat() ?: 0f,
-        editable = editable,
-        baseUrl = baseUrl,
-        state = state
-    )
-
-fun UiUObject.toUObject() =
-    UObject(
-        id = id,
-        type = type,
-        state = state
-    )
 
 class BoardViewModel(
     private val baseUrl: String,
     private val repository: RemoteObjectRepository,
     private val modifier: RemoteObjectModifier,
-    private val fileDownloader: FileDownloader
+    private val fileDownloader: FileDownloader,
+    private val pdfConverter: PdfConverter
 ) : ViewModel() {
 
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)

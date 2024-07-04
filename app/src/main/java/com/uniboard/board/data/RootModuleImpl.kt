@@ -2,6 +2,7 @@ package com.uniboard.board.data
 
 import android.content.Context
 import com.uniboard.board.domain.FileDownloader
+import com.uniboard.board.domain.PdfConverter
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
@@ -30,5 +31,8 @@ class RootModuleImpl(context: Context): RootModule {
 
     override val fileDownloader: FileDownloader by lazy {
         FileDownloaderImpl(context, baseUrl, httpClient)
+    }
+    override val pdfConverter by lazy {
+        PdfConverterImpl()
     }
 }
