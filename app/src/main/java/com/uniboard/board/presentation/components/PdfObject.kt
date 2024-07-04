@@ -39,12 +39,10 @@ fun RootModule.PdfObject(obj: UiUObject, modifier: Modifier = Modifier) {
     val pdfId = remember(obj) {
         requireNotNull(obj.state["uniboardData"]?.jsonObject?.get("data")?.jsonPrimitive?.content)
     }
-    val converter = remember { pdfConverter }
-    val fileDownloader = remember { fileDownloader }
     val images by produceState(listOf<ImageBitmap>()) {
         withContext(Dispatchers.IO) {
             val stream = fileDownloader.download(pdfId)
-            converter.convert(stream).forEach { bytes ->
+            pdfConverter.convert(stream).forEach { bytes ->
                 println(value)
                 value += BitmapFactory.decodeByteArray(bytes, 0, bytes.size).asImageBitmap()
             }
