@@ -1,6 +1,8 @@
 [versions]
 agp = "8.6.0-alpha08"
 coil = "2.6.0"
+constraintlayout = "2.2.0-alpha13"
+constraintlayoutCompose = "1.1.0-alpha13"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -20,6 +22,8 @@ molecule = "2.0.0"
 kotlinSerialization = "1.7.0"
 
 [libraries]
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

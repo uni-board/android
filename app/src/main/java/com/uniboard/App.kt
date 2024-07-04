@@ -1,5 +1,6 @@
 package com.uniboard
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import com.uniboard.help.presentation.HelpFragment
 import com.uniboard.onnboarding.presentation.OnboardingDestination
 import com.uniboard.onnboarding.presentation.OnboardingFragment
 
+
 @Composable
 fun App(modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -34,7 +36,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         // Change this to other destination(e.g. OnboardingDestination) to change the start destination
-        startDestination = BoardDestination("f67e6113-370f-456a-9e7f-9904f9c710d2"),
+        startDestination = OnboardingDestination,
         modifier = modifier
     ) {
         composable<BoardDestination> {
@@ -42,7 +44,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
             BoardScreen(id = data.id, modifier = modifier)
         }
         composable<OnboardingDestination> {
-            AndroidNavigationFragment<OnboardingFragment>(navController, arguments = it.arguments)
+            AndroidNavigationFragment<OnboardingFragment>(navController, arguments = it.arguments, modifier = Modifier.fillMaxSize())
         }
         composable<HelpDestination> {
             AndroidNavigationFragment<HelpFragment>(navController, arguments = it.arguments)
