@@ -36,7 +36,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         // Change this to other destination(e.g. OnboardingDestination) to change the start destination
-        startDestination = OnboardingDestination,
+        startDestination = BoardDestination("f67e6113-370f-456a-9e7f-9904f9c710d2"),
         modifier = modifier
     ) {
         composable<BoardDestination> {
