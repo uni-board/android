@@ -177,6 +177,7 @@ fun BoardCanvas(
 private fun RootModule.TransformableUObject(
     obj: UiUObject, state: BoardScreenState, modifier: Modifier = Modifier
 ) {
+    val updatedState by rememberUpdatedState(state)
     val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit, selectable = state.toolMode is BoardToolMode.View))
     UObject(transformedObj, onModify = { newObj ->
         state.eventSink(
@@ -204,8 +205,8 @@ private fun RootModule.TransformableUObject(
             .border(1.dp, Color.Blue)
             .pointerInput(Unit) {
                 detectTapGestures {
-                    if (state.toolMode is BoardToolMode.Delete) {
-                        state.eventSink(
+                    if (updatedState.toolMode is BoardToolMode.Delete) {
+                        updatedState.eventSink(
                             BoardScreenEvent.DeleteObject(
                                 transformedObj.id
                             )
