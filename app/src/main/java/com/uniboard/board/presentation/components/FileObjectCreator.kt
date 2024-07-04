@@ -50,7 +50,7 @@ fun RootModule.FileObjectCreator(
         FilePickerOptions(
             contract = ActivityResultContracts.StartActivityForResult(),
             intent = fileChooserIntent(),
-            getUri = { requireNotNull(it.data?.data) },
+            getUri = { it.data?.data },
             size = { Size(100f, 100f) },
             fileName = { context.getFileName(it) ?: "Unknown" }
         )
@@ -96,10 +96,10 @@ fun <I, O> RootModule.FileObjectCreator(
 }
 
 
-private fun fileChooserIntent(): Intent {
+fun fileChooserIntent(mimeType: String = "*/*"): Intent {
     val data = Intent(Intent.ACTION_GET_CONTENT)
     data.addCategory(Intent.CATEGORY_OPENABLE)
-    data.setType("*/*")
+    data.setType(mimeType)
     return Intent.createChooser(data, "Choose a file")
 }
 

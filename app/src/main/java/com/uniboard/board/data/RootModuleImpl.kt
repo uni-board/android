@@ -31,7 +31,7 @@ class RootModuleImpl(context: Context): RootModule {
     override val fileRepository: FileRepository by lazy {
         FileRepositoryImpl(context, baseUrl, httpClient)
     }
-    override val pdfConverter by lazy {
-        PdfConverterImpl()
+    override val pdfRenderer by lazy {
+        PdfRendererImpl()
     }
 }

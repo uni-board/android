@@ -96,6 +96,7 @@ sealed interface BoardToolMode {
     data object Delete : BoardToolMode
     data object Image: BoardToolMode
     data object File: BoardToolMode
+    data object Pdf: BoardToolMode
 }
 
 enum class ShapeType(val remoteName: String) {
@@ -159,7 +160,8 @@ class BoardViewModel(
                     BoardToolMode.Note::class to BoardToolMode.Note(ColorType.Green),
                     BoardToolMode.Delete::class to BoardToolMode.Delete,
                     BoardToolMode.Image::class to BoardToolMode.Image,
-                    BoardToolMode.File::class to BoardToolMode.File
+                    BoardToolMode.File::class to BoardToolMode.File,
+                    BoardToolMode.Pdf::class to BoardToolMode.Pdf
                 )
             }
             var currentToolMode by remember {
