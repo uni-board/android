@@ -18,6 +18,7 @@ fun RootModule.UObjectCreator(
         is BoardToolMode.Shape -> CustomPathObjectCreator(mode, onCreate, modifier)
         is BoardToolMode.Text -> TextObjectCreator(mode, onCreate, modifier)
         is BoardToolMode.Image -> ImageObjectCreator(onCreate, modifier)
+        is BoardToolMode.File -> FileObjectCreator(onCreate, modifier)
         else -> {}
     }
 }

@@ -29,7 +29,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @Composable
 fun RootModule.FileObject(obj: UiUObject, modifier: Modifier = Modifier) {
     val fileName = remember(obj) {
-        requireNotNull(obj.state["uniboardData"]?.jsonObject?.get("fileName")?.jsonPrimitive?.content)
+        obj.state["uniboardData"]?.jsonObject?.get("fileName")?.jsonPrimitive?.content ?: "Unknown"
     }
     val objId = remember(obj) {
         requireNotNull(obj.state["uniboardData"]?.jsonObject?.get("data")?.jsonPrimitive?.content)

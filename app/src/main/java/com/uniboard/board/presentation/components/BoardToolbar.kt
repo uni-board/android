@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material.icons.filled.ShapeLine
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -111,7 +112,8 @@ private val availableModes = mutableStateListOf(
     ToolMode(Icons.Default.TextFields, "Text", BoardToolMode.Text()) { selected, onSelect, padding, modifier ->
         TextOptions(selected, onSelect, modifier, padding)
     },
-    ToolMode(Icons.Default.Image, "Image", BoardToolMode.Image)
+    ToolMode(Icons.Default.Image, "Image", BoardToolMode.Image),
+    ToolMode(Icons.Default.UploadFile, "File", BoardToolMode.File)
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)
