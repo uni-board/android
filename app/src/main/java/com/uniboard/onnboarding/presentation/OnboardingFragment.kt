@@ -8,6 +8,7 @@ import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentOnboardingBinding
 import kotlinx.serialization.Serializable
 
+
 @Serializable
 data object OnboardingDestination
 
