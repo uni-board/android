@@ -13,7 +13,7 @@ fun RootModule.UObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: 
         "triangle", "line", "ellipse", "rect" -> CustomPathObject(obj, modifier)
         "uniboard/stickyNote" -> NoteObject(obj, onModify, modifier)
         "uniboard/image" -> ImageObject(obj, modifier)
-        "uniboard/file" -> FileObject(obj, onModify, modifier)
+        "uniboard/file" -> FileObject(obj, modifier)
         "uniboard/pdf" -> PdfObject(obj, modifier)
     }
 }
