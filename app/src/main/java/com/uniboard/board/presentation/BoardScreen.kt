@@ -49,6 +49,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -135,7 +136,9 @@ private fun RootModule.Board(state: BoardScreenState, modifier: Modifier = Modif
     BoardCanvas(state, modifier) {
         val updatedState by rememberUpdatedState(state)
         state.objects.forEach { obj ->
-            TransformableUObject(obj, updatedState)
+            key(obj.id) {
+                TransformableUObject(obj, updatedState)
+            }
         }
         UObjectCreator(updatedState.toolMode, onCreate = {
             updatedState.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(updatedState.toolMode is BoardToolMode.Edit)))
@@ -175,7 +178,7 @@ fun BoardCanvas(
 private fun RootModule.TransformableUObject(
     obj: UiUObject, state: BoardScreenState, modifier: Modifier = Modifier
 ) {
-    val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
+    val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit, selectable = state.toolMode is BoardToolMode.View))
     UObject(transformedObj, onModify = { newObj ->
         state.eventSink(
             BoardScreenEvent.TransformObject(

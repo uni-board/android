@@ -35,15 +35,16 @@ fun RootModule.FileObject(obj: UiUObject, modifier: Modifier = Modifier) {
         requireNotNull(obj.state["uniboardData"]?.jsonObject?.get("data")?.jsonPrimitive?.content)
     }
     val scope = rememberCoroutineScope { Dispatchers.IO }
+    val clickableModifier = if (obj.selectable) Modifier.clickable {
+        scope.launch {
+            fileRepository.downloadToDevice(objId, fileName)
+        }
+    } else Modifier
     Column(
         modifier
             .wrapContentSize(unbounded = true)
             .background(MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.shapes.large)
-            .clickable {
-                scope.launch {
-                    fileRepository.downloadToDevice(objId, fileName)
-                }
-            }
+            .then(clickableModifier)
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
