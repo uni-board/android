@@ -18,11 +18,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.UiUObjectApi
+import com.uniboard.board.presentation.content
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+fun FileObject() = UiUObjectApi {
+    type { it == "uniboard/file" }
+    content { obj, modifier ->
+        FileObject(obj, modifier = modifier)
+    }
+}
+
 @Composable
-fun FileObject(obj: UiUObject, onModify: (newObj: UiUObject) -> Unit, modifier: Modifier = Modifier) {
+fun FileObject(obj: UiUObject, modifier: Modifier = Modifier) {
     val fileName = remember(obj) {
         obj.state["uniboardData"]?.jsonObject?.get("fileName")?.jsonPrimitive?.content
     }

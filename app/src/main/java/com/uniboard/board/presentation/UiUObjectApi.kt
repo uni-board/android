@@ -1,67 +1,136 @@
 package com.uniboard.board.presentation
 
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.uniboard.board.domain.UObject
+import kotlin.reflect.KClass
 
 @DslMarker
 annotation class UiUObjectDSL
 
 interface UiUObjectApi {
-    val type: String
-    val features: Set<UiUObjectFeature>
+    infix fun matches(type: String): Boolean
+    val features: Map<KClass<out UiUObjectFeature>, UiUObjectFeature>
+    companion object
 }
 
+val UiUObjectApi.isToolbarSupported
+    get() = features[UiUObjectFeature.ToolbarOptions::class] != null
+
+val UiUObjectApi.toolbar
+    get() = features[UiUObjectFeature.ToolbarOptions::class] as? UiUObjectFeature.ToolbarOptions
+
+val UiUObjectApi.content
+    get() = features[UiUObjectFeature.Content::class] as? UiUObjectFeature.Content
+
+val UiUObjectApi.creator
+    get() = features[UiUObjectFeature.Creator::class] as? UiUObjectFeature.Creator
+
 sealed interface UiUObjectFeature {
-    data class Content(val content: @Composable (obj: UiUObject, modifier: Modifier) -> Unit) :
+    data class Content(val content: @Composable (obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier) -> Unit) :
         UiUObjectFeature
 
-    data class Creator(val content: @Composable (mode: BoardToolMode, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit) :
-        UiUObjectFeature
+    data class Creator(
+        val content: @Composable (mode: BoardToolModeState, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit
+    ) : UiUObjectFeature
 
-    data class ToolbarOptions(val content: @Composable (mode: BoardToolMode, onSelect: (mode: BoardToolMode) -> Unit, modifier: Modifier) -> Unit) :
-        UiUObjectFeature
-
-    data class Icon(val content: @Composable (modifier: Modifier) -> Unit) : UiUObjectFeature
+    data class ToolbarOptions(
+        val type: String,
+        val icon: @Composable (modifier: Modifier) -> Unit,
+        val content: (@Composable (mode: BoardToolModeState, onSelect: (mode: BoardToolModeState) -> Unit, modifier: Modifier) -> Unit)?,
+        val state: MutableState<BoardToolModeState> = mutableStateOf(BoardToolModeState(type = type, optionsSupported = content != null, state = emptyMap()))
+    ) : UiUObjectFeature
 }
 
 interface UiUObjectScope {
     @UiUObjectDSL
-    fun content(content: @Composable (obj: UiUObject, modifier: Modifier) -> Unit)
+    fun type(filter: (String) -> Boolean)
 
     @UiUObjectDSL
-    fun creator(content: @Composable (mode: BoardToolMode, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit)
+    fun content(content: @Composable (obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier) -> Unit)
 
     @UiUObjectDSL
-    fun toolbarOptions(content: @Composable (mode: BoardToolMode, onSelect: (mode: BoardToolMode) -> Unit, modifier: Modifier) -> Unit)
+    fun creator(
+        content: @Composable (mode: BoardToolModeState, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit
+    )
+
+    @UiUObjectDSL
+    fun toolbar(type: String, content: UiUObjectToolbarScope.() -> Unit)
+}
+
+interface UiUObjectToolbarScope {
+    @UiUObjectDSL
+    fun options(
+        content: @Composable (mode: BoardToolModeState, onSelect: (mode: BoardToolModeState) -> Unit, modifier: Modifier) -> Unit
+    )
 
     @UiUObjectDSL
     fun icon(content: @Composable (modifier: Modifier) -> Unit)
 }
 
 @UiUObjectDSL
-fun UiUObjectApi(type: String, content: UiUObjectScope.() -> Unit): UiUObjectApi {
-    val features = mutableSetOf<UiUObjectFeature>()
+fun UiUObjectScope.content(content: @Composable (obj: UiUObject, modifier: Modifier) -> Unit) {
+    content { obj, _, modifier -> content(obj, modifier) }
+}
+
+@UiUObjectDSL
+fun UiUObjectToolbarScope.icon(icon: ImageVector) {
+    icon { Icon(icon, contentDescription = null) }
+}
+
+@UiUObjectDSL
+fun UiUObjectApi(content: UiUObjectScope.() -> Unit): UiUObjectApi {
+    val features = mutableMapOf<KClass<out UiUObjectFeature>, UiUObjectFeature>()
+    var currentFilter: (String) -> Boolean = { false }
     val scope = object : UiUObjectScope {
-        override fun content(content: @Composable (obj: UiUObject, modifier: Modifier) -> Unit) {
-            features.add(UiUObjectFeature.Content(content))
+        override fun type(filter: (String) -> Boolean) {
+            currentFilter = filter
         }
 
-        override fun creator(content: @Composable (mode: BoardToolMode, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit) {
-            features.add(UiUObjectFeature.Creator(content))
+        override fun content(content: @Composable (obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier) -> Unit) {
+            features[UiUObjectFeature.Content::class] = UiUObjectFeature.Content(content)
         }
 
-        override fun toolbarOptions(content: @Composable (mode: BoardToolMode, onSelect: (mode: BoardToolMode) -> Unit, modifier: Modifier) -> Unit) {
-            features.add(UiUObjectFeature.ToolbarOptions(content))
+        override fun creator(
+            content: @Composable (mode: BoardToolModeState, onCreate: (UObject) -> Unit, modifier: Modifier) -> Unit
+        ) {
+            features[UiUObjectFeature.Creator::class] = UiUObjectFeature.Creator(content)
         }
 
-        override fun icon(content: @Composable (modifier: Modifier) -> Unit) {
-            features.add(UiUObjectFeature.Icon(content))
+        override fun toolbar(type: String, content: UiUObjectToolbarScope.() -> Unit) {
+            object : UiUObjectToolbarScope {
+                override fun options(content: @Composable (mode: BoardToolModeState, onSelect: (mode: BoardToolModeState) -> Unit, modifier: Modifier) -> Unit) {
+                    val previous =
+                        (features[UiUObjectFeature.ToolbarOptions::class] as? UiUObjectFeature.ToolbarOptions)?.icon
+                    features[UiUObjectFeature.ToolbarOptions::class] =
+                        UiUObjectFeature.ToolbarOptions(
+                            type = type,
+                            icon = previous ?: {},
+                            content
+                        )
+                }
+
+                override fun icon(content: @Composable (modifier: Modifier) -> Unit) {
+                    val previous =
+                        (features[UiUObjectFeature.ToolbarOptions::class] as? UiUObjectFeature.ToolbarOptions)?.content
+                    features[UiUObjectFeature.ToolbarOptions::class] =
+                        UiUObjectFeature.ToolbarOptions(
+                            type = type,
+                            icon = content,
+                            content = previous
+                        )
+                }
+
+            }.content()
         }
     }
     scope.content()
     return object : UiUObjectApi {
-        override val type = type
+        override fun matches(type: String) = currentFilter(type)
         override val features = features
     }
 }

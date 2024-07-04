@@ -1,5 +1,9 @@
 package com.uniboard.board.presentation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -20,30 +24,71 @@ import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObjectUpdate
+import com.uniboard.board.presentation.components.ColorType
+import com.uniboard.board.presentation.components.CustomPathObject
+import com.uniboard.board.presentation.components.FileObject
+import com.uniboard.board.presentation.components.ImageObject
+import com.uniboard.board.presentation.components.NoteObject
+import com.uniboard.board.presentation.components.PathObject
+import com.uniboard.board.presentation.components.PdfObject
+import com.uniboard.board.presentation.components.TextObject
 import com.uniboard.util.mutate
+import com.uniboard.util.replace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.reflect.KClass
 
-fun RootModule.BoardViewModel(id: String) =
-    BoardViewModel(
-        baseUrl = baseUrl,
-        repository = remoteObjectRepository(id),
-        modifier = remoteObjectModifier(id),
-        fileDownloader = fileDownloader,
-        pdfConverter = pdfConverter
-    )
+fun RootModule.BoardViewModel(id: String) = BoardViewModel(
+    baseUrl = baseUrl,
+    repository = remoteObjectRepository(id),
+    modifier = remoteObjectModifier(id),
+    fileDownloader = fileDownloader,
+    pdfConverter = pdfConverter
+)
 
 @Immutable
 data class BoardScreenState(
     val objects: List<UiUObject>,
-    val toolMode: BoardToolMode,
+    val toolMode: BoardToolModeState,
     val showToolOptions: Boolean,
     val showMore: Boolean,
+    val objectTypes: Set<UiUObjectApi>,
     val eventSink: (BoardScreenEvent) -> Unit
 )
+
+@Immutable
+data class BoardToolModeState(
+    val type: String, val optionsSupported: Boolean, val state: Map<String, Any?>
+)
+
+val UiUObjectApi.Companion.View
+    get() = UiUObjectApi {
+        type { it == "view" }
+        toolbar("view") { icon(Icons.Default.Visibility) }
+    }
+
+val UiUObjectApi.Companion.Edit
+    get() = UiUObjectApi {
+        type { it == "edit" }
+        toolbar("edit") { icon(Icons.Default.Edit) }
+    }
+
+val UiUObjectApi.Companion.Delete
+    get() = UiUObjectApi {
+        type { it == "delete" }
+        toolbar("delete") { icon(Icons.Default.Delete) }
+    }
+
+fun BoardToolModeState.copyWith(block: MutableMap<String, Any?>.() -> Unit): BoardToolModeState {
+    return copy(state = state.toMutableMap().apply(block))
+}
+
+fun BoardToolModeState.merge(other: BoardToolModeState): BoardToolModeState {
+    if (other.type != type) return other
+    return BoardToolModeState(type, other.optionsSupported, state + other.state)
+}
 
 @Immutable
 sealed interface BoardToolMode {
@@ -101,30 +146,18 @@ sealed interface BoardToolMode {
 }
 
 enum class ShapeType(val remoteName: String) {
-    Triangle("triangle"),
-    Square("rect"),
-    Circle("ellipse"),
-    Oval("ellipse"),
-    Line("line")
+    Triangle("triangle"), Square("rect"), Circle("ellipse"), Oval("ellipse"), Line("line")
 }
 
-enum class ColorType(val remoteName: String, val color: Color) {
-    Red("red", Color.Red),
-    Green("green", Color.Green),
-    Blue("blue", Color.Blue),
-    Yellow("yellow", Color.Yellow),
-    Black("black", Color.Black),
-}
 
 @Immutable
 sealed interface BoardScreenEvent {
     data class TransformObject(
-        val oldObj: UiUObject,
-        val obj: UiUObject
+        val oldObj: UiUObject, val obj: UiUObject
     ) : BoardScreenEvent
 
-    data class SetToolMode(val mode: BoardToolMode) : BoardScreenEvent
-    data class ShowToolOptions(val mode: BoardToolMode) : BoardScreenEvent
+    data class SetToolMode(val mode: BoardToolModeState) : BoardScreenEvent
+    data class ShowToolOptions(val mode: BoardToolModeState) : BoardScreenEvent
     data object HideToolOptions : BoardScreenEvent
 
     data class CreateObject(val obj: UiUObject) : BoardScreenEvent
@@ -143,97 +176,91 @@ class BoardViewModel(
 ) : ViewModel() {
 
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
-    val state =
-        scope.launchMolecule(RecompositionMode.ContextClock) {
-            val toolModes = remember {
-                mutableStateMapOf(
-                    BoardToolMode.View::class to BoardToolMode.View,
-                    BoardToolMode.Edit::class to BoardToolMode.Edit,
-                    BoardToolMode.Pen::class to BoardToolMode.Pen(
-                        width = 10f,
-                        color = Color.Black
-                    ),
-                    BoardToolMode.Shape::class to BoardToolMode.Shape(
-                        color = Color.Green,
-                        fill = true,
-                        type = ShapeType.Triangle,
-                        strokeWidth = 10f
-                    ),
-                    BoardToolMode.Text::class to BoardToolMode.Text(Color.Green),
-                    BoardToolMode.Note::class to BoardToolMode.Note(ColorType.Green),
-                    BoardToolMode.Delete::class to BoardToolMode.Delete
-                )
+    val state = scope.launchMolecule(RecompositionMode.ContextClock) {
+        val objectTypes = remember {
+            setOf(
+                UiUObjectApi.View,
+                UiUObjectApi.Edit,
+                UiUObjectApi.Delete,
+                PathObject(),
+                NoteObject(),
+                CustomPathObject(),
+                FileObject(),
+                ImageObject(),
+                TextObject(),
+                PdfObject()
+            )
+        }
+        var currentToolMode by remember {
+            mutableStateOf(
+                UiUObjectApi.View
+            )
+        }
+        val objects by produceState(listOf<UiUObject>()) {
+            val result = repository.allObjects()
+            result.onSuccess { objects ->
+                value = objects.map { it.toUiUObject(baseUrl = baseUrl) }
             }
-            var currentToolMode by remember {
-                mutableStateOf<KClass<out BoardToolMode>>(
-                    BoardToolMode.View::class
-                )
-            }
-            val objects by produceState(listOf<UiUObject>()) {
-                val result = repository.allObjects()
-                result.onSuccess { objects ->
-                    value = objects.map { it.toUiUObject(baseUrl = baseUrl) }
-                }
-                modifier.receive().collect { update ->
-                    when (update) {
-                        is UObjectUpdate.Add -> value += update.obj.toUiUObject(baseUrl = baseUrl)
-                        is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
-                        is UObjectUpdate.Modify -> {
-                            val diffId = RemoteObject.idFromDiff(update.diff)
-                            value = value.map {
-                                if (it.id == diffId) {
-                                    RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
-                                        .toUiUObject(baseUrl = baseUrl)
-                                } else it
-                            }
+            modifier.receive().collect { update ->
+                when (update) {
+                    is UObjectUpdate.Add -> value += update.obj.toUiUObject(baseUrl = baseUrl)
+                    is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
+                    is UObjectUpdate.Modify -> {
+                        val diffId = RemoteObject.idFromDiff(update.diff)
+                        value = value.map {
+                            if (it.id == diffId) {
+                                RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
+                                    .toUiUObject(baseUrl = baseUrl)
+                            } else it
                         }
                     }
                 }
             }
-            var showToolOptions by remember { mutableStateOf(false) }
-            var showMore by remember { mutableStateOf(false) }
-            BoardScreenState(
-                objects,
-                toolModes[currentToolMode] ?: BoardToolMode.View,
-                showToolOptions,
-                showMore
-            ) { event ->
-                when (event) {
-                    is BoardScreenEvent.TransformObject -> modifyObject(
-                        event.oldObj,
-                        event.obj
-                    )
+        }
+        var showToolOptions by remember { mutableStateOf(false) }
+        var showMore by remember { mutableStateOf(false) }
+        BoardScreenState(
+            objects = objects,
+            toolMode = objectTypes.find { it.toolbar?.type == currentToolMode.toolbar?.type }?.toolbar?.state?.value
+                ?: UiUObjectApi.View.toolbar!!.state.value,
+            showToolOptions = showToolOptions,
+            showMore = showMore,
+            objectTypes = objectTypes
+        ) { event ->
+            when (event) {
+                is BoardScreenEvent.TransformObject -> modifyObject(
+                    event.oldObj, event.obj
+                )
 
-                    is BoardScreenEvent.SetToolMode -> toolModes[currentToolMode] = event.mode
-                    BoardScreenEvent.HideToolOptions -> showToolOptions = false
-                    is BoardScreenEvent.ShowToolOptions -> {
-                        showToolOptions = true
-                        currentToolMode = event.mode::class
-                        toolModes[event.mode::class] =
-                            toolModes[event.mode::class]!!.merge(event.mode)
-                    }
-
-                    is BoardScreenEvent.CreateObject -> viewModelScope.launch {
-                        modifier.send(
-                            UObjectUpdate.Add(event.obj.toUObject())
-                        )
-                        showToolOptions = false
-                        delay(500)
-                        currentToolMode = BoardToolMode.Edit::class
-                    }
-
-                    is BoardScreenEvent.DeleteObject -> viewModelScope.launch {
-                        modifier.send(UObjectUpdate.Delete(event.id))
-                    }
-
-                    is BoardScreenEvent.ShowMore -> showMore = event.show
+                is BoardScreenEvent.SetToolMode -> objectTypes.first { it.toolbar?.type == event.mode.type }.toolbar?.state?.value = event.mode
+                BoardScreenEvent.HideToolOptions -> showToolOptions = false
+                is BoardScreenEvent.ShowToolOptions -> {
+                    showToolOptions = true
+                    currentToolMode = objectTypes.find { it.toolbar?.state?.value?.type == event.mode.type } ?: UiUObjectApi.View
+                    val toolbar = objectTypes.find { it.toolbar?.type == event.mode.type }?.toolbar
+                    toolbar?.state?.value = toolbar!!.state.value.merge(event.mode)
                 }
+
+                is BoardScreenEvent.CreateObject -> viewModelScope.launch {
+                    modifier.send(
+                        UObjectUpdate.Add(event.obj.toUObject())
+                    )
+                    showToolOptions = false
+                    delay(500)
+                    currentToolMode = UiUObjectApi.Edit
+                }
+
+                is BoardScreenEvent.DeleteObject -> viewModelScope.launch {
+                    modifier.send(UObjectUpdate.Delete(event.id))
+                }
+
+                is BoardScreenEvent.ShowMore -> showMore = event.show
             }
         }
+    }
 
     private fun modifyObject(
-        oldObj: UiUObject,
-        obj: UiUObject
+        oldObj: UiUObject, obj: UiUObject
     ) = viewModelScope.launch {
         val updatedState = obj.state.mutate {
             this["scaleX"] = JsonPrimitive(obj.scaleX)
@@ -245,8 +272,7 @@ class BoardViewModel(
         modifier.send(
             UObjectUpdate.Modify(
                 RemoteObject.createDiff(
-                    oldObj.toUObject(),
-                    obj.toUObject().copy(state = updatedState)
+                    oldObj.toUObject(), obj.toUObject().copy(state = updatedState)
                 )
             )
         )

@@ -7,3 +7,8 @@ fun <K, V> Map<K, V>.mutate(block: MutableMap<K, V>.() -> Unit): Map<K, V> {
 fun <K, V> Map<K, V>.diffWith(other: Map<K, V>): Map<K, V> {
     return filter { (key, value) -> other[key] != value }
 }
+
+fun <T> MutableSet<T>.replace(replacement: T, predicate: (T) -> Boolean) {
+    val removed = this.removeIf(predicate)
+    if (removed) add(replacement)
+}

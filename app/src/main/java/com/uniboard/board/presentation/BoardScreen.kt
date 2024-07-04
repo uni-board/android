@@ -137,8 +137,8 @@ private fun Board(state: BoardScreenState, modifier: Modifier = Modifier) {
         state.objects.forEach { obj ->
             TransformableUObject(obj, updatedState)
         }
-        UObjectCreator(updatedState.toolMode, onCreate = {
-            updatedState.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(updatedState.toolMode is BoardToolMode.Edit)))
+        UObjectCreator(updatedState.objectTypes, updatedState.toolMode, onCreate = {
+            updatedState.eventSink(BoardScreenEvent.CreateObject(it.toUiUObject(UiUObjectApi.Edit matches updatedState.toolMode.type)))
         }, Modifier.fillMaxSize())
     }
 }
@@ -150,7 +150,7 @@ fun BoardCanvas(
     var scale by remember { mutableFloatStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
     val transformState = rememberTransformableState { zoomChange, panChange, rotationChange ->
-        if (state.toolMode is BoardToolMode.View) {
+        if (UiUObjectApi.View matches state.toolMode.type) {
             scale *= zoomChange
             offset += panChange
         }
@@ -175,8 +175,9 @@ fun BoardCanvas(
 private fun TransformableUObject(
     obj: UiUObject, state: BoardScreenState, modifier: Modifier = Modifier
 ) {
-    val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
-    UObject(transformedObj, onModify = { newObj ->
+    val transformedObj by rememberUpdatedState(obj.copy(editable = UiUObjectApi.View matches state.toolMode.type))
+    val updatedState by rememberUpdatedState(state)
+    UObject(state.objectTypes, transformedObj, onModify = { newObj ->
         state.eventSink(
             BoardScreenEvent.TransformObject(
                 transformedObj, newObj
@@ -185,7 +186,7 @@ private fun TransformableUObject(
     },
         modifier
             .transformable(
-                transformedObj, enabled = state.toolMode is BoardToolMode.Edit
+                transformedObj, enabled = UiUObjectApi.Edit matches state.toolMode.type
             ) { scaleX, scaleY, rotation, offset ->
                 state.eventSink(
                     BoardScreenEvent.TransformObject(
@@ -202,7 +203,7 @@ private fun TransformableUObject(
             .border(1.dp, Color.Blue)
             .pointerInput(Unit) {
                 detectTapGestures {
-                    if (state.toolMode is BoardToolMode.Delete) {
+                    if (UiUObjectApi.Delete matches updatedState.toolMode.type) {
                         state.eventSink(
                             BoardScreenEvent.DeleteObject(
                                 transformedObj.id
@@ -294,9 +295,14 @@ private fun ExpandedBottomBar(
                     )
                     .fillMaxWidth()
             )
-            QuitOption(onClick = {
-                onNavigate(BoardNavigationEvent.Quit)
-            }, Modifier.sharedBounds(rootTransitionScope, OnboardingDestination).fillMaxWidth())
+            QuitOption(
+                onClick = {
+                    onNavigate(BoardNavigationEvent.Quit)
+                },
+                Modifier
+                    .sharedBounds(rootTransitionScope, OnboardingDestination)
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -399,7 +405,9 @@ private fun CollapsedBottomBar(
             Icon(Icons.Default.Menu, contentDescription = null)
         }
         BoardToolbar(
-            state.toolMode, onSelect = { event ->
+            objectTypes = state.objectTypes,
+            toolMode = state.toolMode,
+            onSelect = { event ->
                 when (event) {
                     BoardToolbarEvent.HideOptions -> state.eventSink(
                         BoardScreenEvent.HideToolOptions
@@ -417,42 +425,8 @@ private fun CollapsedBottomBar(
                         )
                     )
                 }
-            }, showOptions = state.showToolOptions
+            },
+            showOptions = state.showToolOptions,
         )
-    }
-}
-
-@SuppressLint("UnusedContentLambdaTargetStateParameter")
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
-@Composable
-private fun BoardScreenPreview() {
-    UniboardTheme {
-        SharedTransitionLayout {
-            AnimatedContent(Unit) {
-                BoardScreen(BoardScreenState(
-                    listOf(
-                        UiUObject(
-                            id = "123",
-                            type = "text",
-                            top = 100,
-                            left = 100,
-                            scaleX = 1f,
-                            scaleY = 1f,
-                            state = JsonObject(
-                                mapOf(
-                                    "text" to "Hello World".asJsonValue(),
-                                    "left" to (100).asJsonValue(),
-                                    "top" to (100).asJsonValue(),
-                                    "width" to (100).asJsonValue()
-                                )
-                            )
-                        ),
-                    ), toolMode = BoardToolMode.View, showToolOptions = false, showMore = false
-                ) {},
-                    ContainerTransformScope(this@SharedTransitionLayout, this),
-                    onNavigate = {})
-            }
-        }
     }
 }

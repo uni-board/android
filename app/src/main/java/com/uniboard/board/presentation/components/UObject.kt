@@ -1,17 +1,22 @@
 package com.uniboard.board.presentation.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.uniboard.board.presentation.UiUObject
+import com.uniboard.board.presentation.UiUObjectApi
+import com.uniboard.board.presentation.UiUObjectFeature
+import com.uniboard.board.presentation.content
 
 @Composable
-fun UObject(obj: UiUObject, onModify: (UiUObject) -> Unit, modifier: Modifier = Modifier) {
-    when (obj.type) {
-        "textbox" -> TextObject(obj, onModify, modifier)
-        "path" -> PathObject(obj, modifier)
-        "triangle", "line", "ellipse", "rect" -> CustomPathObject(obj, modifier)
-        "uniboard/stickyNote" -> NoteObject(obj, onModify, modifier)
-        "uniboard/image" -> ImageObject(obj, modifier)
-        "uniboard/file" -> FileObject(obj, onModify, modifier)
+fun UObject(
+    objects: Set<UiUObjectApi>,
+    obj: UiUObject,
+    onModify: (UiUObject) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val currentObj = remember(obj) {
+        objects.find { it.matches(obj.type) }?.content
     }
+    currentObj?.content?.invoke(obj, onModify, modifier)
 }

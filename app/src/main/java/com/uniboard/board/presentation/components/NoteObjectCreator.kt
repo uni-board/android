@@ -8,6 +8,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.UObject
 import com.uniboard.board.presentation.BoardToolMode
+import com.uniboard.board.presentation.BoardToolModeState
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
@@ -15,7 +16,7 @@ import kotlinx.serialization.json.jsonObject
 
 @Composable
 fun NoteObjectCreator(
-    mode: BoardToolMode.Note,
+    mode: BoardToolModeState,
     onCreate: (UObject) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -26,7 +27,7 @@ fun NoteObjectCreator(
                 this["uniboardData"] = JsonObject(
                     data + mapOf(
                         "stickerText" to JsonPrimitive("text"),
-                        "stickerColor" to JsonPrimitive(requireNotNull( mode.color?.remoteName)),
+                        "stickerColor" to JsonPrimitive(requireNotNull(mode.state["color"] as? ColorType).remoteName),
                     )
                 )
                 this["top"] = JsonPrimitive(offset.y)
