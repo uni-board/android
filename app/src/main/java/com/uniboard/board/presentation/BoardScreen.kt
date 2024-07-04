@@ -108,7 +108,7 @@ data class BoardDestination(val id: String)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun BoardScreen(
+fun RootModule.BoardScreen(
     state: BoardScreenState,
     transitionScope: ContainerTransformScope,
     onNavigate: (event: BoardNavigationEvent) -> Unit,
@@ -131,7 +131,7 @@ fun BoardScreen(
 }
 
 @Composable
-private fun Board(state: BoardScreenState, modifier: Modifier = Modifier) {
+private fun RootModule.Board(state: BoardScreenState, modifier: Modifier = Modifier) {
     BoardCanvas(state, modifier) {
         val updatedState by rememberUpdatedState(state)
         state.objects.forEach { obj ->
@@ -172,7 +172,7 @@ fun BoardCanvas(
 }
 
 @Composable
-private fun TransformableUObject(
+private fun RootModule.TransformableUObject(
     obj: UiUObject, state: BoardScreenState, modifier: Modifier = Modifier
 ) {
     val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit))
@@ -296,7 +296,10 @@ private fun ExpandedBottomBar(
             )
             QuitOption(onClick = {
                 onNavigate(BoardNavigationEvent.Quit)
-            }, Modifier.sharedBounds(rootTransitionScope, OnboardingDestination).fillMaxWidth())
+            },
+                Modifier
+                    .sharedBounds(rootTransitionScope, OnboardingDestination)
+                    .fillMaxWidth())
         }
     }
 }
@@ -419,40 +422,5 @@ private fun CollapsedBottomBar(
                 }
             }, showOptions = state.showToolOptions
         )
-    }
-}
-
-@SuppressLint("UnusedContentLambdaTargetStateParameter")
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Preview
-@Composable
-private fun BoardScreenPreview() {
-    UniboardTheme {
-        SharedTransitionLayout {
-            AnimatedContent(Unit) {
-                BoardScreen(BoardScreenState(
-                    listOf(
-                        UiUObject(
-                            id = "123",
-                            type = "text",
-                            top = 100,
-                            left = 100,
-                            scaleX = 1f,
-                            scaleY = 1f,
-                            state = JsonObject(
-                                mapOf(
-                                    "text" to "Hello World".asJsonValue(),
-                                    "left" to (100).asJsonValue(),
-                                    "top" to (100).asJsonValue(),
-                                    "width" to (100).asJsonValue()
-                                )
-                            )
-                        ),
-                    ), toolMode = BoardToolMode.View, showToolOptions = false, showMore = false
-                ) {},
-                    ContainerTransformScope(this@SharedTransitionLayout, this),
-                    onNavigate = {})
-            }
-        }
     }
 }
