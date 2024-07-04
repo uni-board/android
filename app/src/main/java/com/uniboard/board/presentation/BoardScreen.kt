@@ -125,8 +125,7 @@ fun RootModule.BoardScreen(
         BottomBar(state, transitionScope, onNavigate)
     }) {
         Board(
-            state,
-            Modifier.blur(animateDpAsState(if (state.showMore) 8.dp else 0.dp, label = "").value)
+            state
         )
     }
 }

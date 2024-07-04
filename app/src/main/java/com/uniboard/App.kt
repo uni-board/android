@@ -8,6 +8,7 @@ import androidx.compose.animation.core.ExperimentalAnimationSpecApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,8 +30,8 @@ import com.uniboard.board_details.presentation.BoardDetailsFragment
 import com.uniboard.core.presentation.AndroidNavigationFragment
 import com.uniboard.core.presentation.ContainerTransformScope
 import com.uniboard.core.presentation.DefaultBoundsTransform
-import com.uniboard.core.presentation.containerTransformScope
 import com.uniboard.core.presentation.NavigationFragment
+import com.uniboard.core.presentation.containerTransformScope
 import com.uniboard.core.presentation.sharedBounds
 import com.uniboard.help.presentation.HelpDestination
 import com.uniboard.help.presentation.HelpFragment
@@ -121,6 +122,7 @@ private inline fun <reified T : NavigationFragment> AnimatedNavigationFragment(
     AndroidNavigationFragment<T>(
         navController, arguments = arguments,
         modifier = modifier
+            .safeDrawingPadding()
             .padding(16.dp)
             .clip(MaterialTheme.shapes.extraLarge)
             .sharedBounds(
