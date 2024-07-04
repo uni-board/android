@@ -13,8 +13,6 @@ import androidx.lifecycle.viewModelScope
 import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
-import com.uniboard.board.domain.FileDownloader
-import com.uniboard.board.domain.PdfConverter
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
@@ -31,9 +29,7 @@ fun RootModule.BoardViewModel(id: String) =
     BoardViewModel(
         baseUrl = baseUrl,
         repository = remoteObjectRepository(id),
-        modifier = remoteObjectModifier(id),
-        fileDownloader = fileDownloader,
-        pdfConverter = pdfConverter
+        modifier = remoteObjectModifier(id)
     )
 
 @Immutable
@@ -98,6 +94,7 @@ sealed interface BoardToolMode {
     }
 
     data object Delete : BoardToolMode
+    data object Image: BoardToolMode
 }
 
 enum class ShapeType(val remoteName: String) {
@@ -137,9 +134,7 @@ sealed interface BoardScreenEvent {
 class BoardViewModel(
     private val baseUrl: String,
     private val repository: RemoteObjectRepository,
-    private val modifier: RemoteObjectModifier,
-    private val fileDownloader: FileDownloader,
-    private val pdfConverter: PdfConverter
+    private val modifier: RemoteObjectModifier
 ) : ViewModel() {
 
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
@@ -161,7 +156,8 @@ class BoardViewModel(
                     ),
                     BoardToolMode.Text::class to BoardToolMode.Text(Color.Green),
                     BoardToolMode.Note::class to BoardToolMode.Note(ColorType.Green),
-                    BoardToolMode.Delete::class to BoardToolMode.Delete
+                    BoardToolMode.Delete::class to BoardToolMode.Delete,
+                    BoardToolMode.Image::class to BoardToolMode.Image
                 )
             }
             var currentToolMode by remember {

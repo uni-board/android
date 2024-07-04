@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material.icons.filled.ShapeLine
 import androidx.compose.material.icons.filled.TextFields
@@ -109,7 +110,8 @@ private val availableModes = mutableStateListOf(
     },
     ToolMode(Icons.Default.TextFields, "Text", BoardToolMode.Text()) { selected, onSelect, padding, modifier ->
         TextOptions(selected, onSelect, modifier, padding)
-    }
+    },
+    ToolMode(Icons.Default.Image, "Image", BoardToolMode.Image)
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)

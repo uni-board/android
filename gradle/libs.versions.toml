@@ -7,7 +7,7 @@ junit = "4.13.2"
 junitVersion = "1.2.0"
 espressoCore = "3.6.0"
 lifecycleRuntimeKtx = "2.8.2"
-activityCompose = "1.9.0"
+activity = "1.9.0"
 viewmodelCompose = "2.8.2"
 composeBom = "2024.06.00"
 compose = "1.7.0-beta03"
@@ -27,7 +27,8 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose"}
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "compose" }
@@ -48,6 +49,7 @@ http4k-bom = { group = "org.http4k", name = "http4k-bom", version.ref = "http4kB
 http4k-core = { group = "org.http4k", name = "http4k-core" }
 http4k-client = { group = "org.http4k", name = "http4k-client-apache" }
 http4k-serialization = { group = "org.http4k", name = "http4k-format-kotlinx-serialization" }
+http4k-multipart = { group = "org.http4k", name = "http4k-multipart" }
 
 socketio = { module = "io.socket:socket.io-client", version = "2.1.0" }
 [plugins]

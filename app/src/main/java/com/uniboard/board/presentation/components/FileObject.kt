@@ -41,7 +41,7 @@ fun RootModule.FileObject(obj: UiUObject, modifier: Modifier = Modifier) {
             .background(MaterialTheme.colorScheme.tertiaryContainer, MaterialTheme.shapes.large)
             .clickable {
                 scope.launch {
-                    fileDownloader.downloadToDevice(objId, fileName)
+                    fileRepository.downloadToDevice(objId, fileName)
                 }
             }
             .padding(8.dp),

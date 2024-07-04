@@ -41,9 +41,8 @@ fun RootModule.PdfObject(obj: UiUObject, modifier: Modifier = Modifier) {
     }
     val images by produceState(listOf<ImageBitmap>()) {
         withContext(Dispatchers.IO) {
-            val stream = fileDownloader.download(pdfId)
+            val stream = fileRepository.download(pdfId)
             pdfConverter.convert(stream).forEach { bytes ->
-                println(value)
                 value += BitmapFactory.decodeByteArray(bytes, 0, bytes.size).asImageBitmap()
             }
         }
