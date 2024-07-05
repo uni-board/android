@@ -8,5 +8,5 @@
     <string name="share_board">Поделиться доской</string>
     <string name="share_id">Поделиться по id</string>
     <string name="share_url">Поделиться по ссылке</string>
-
+    <string name="None">None</string>
 </resources>

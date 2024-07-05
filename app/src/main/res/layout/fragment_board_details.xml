@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -13,23 +13,24 @@
         android:layout_height="wrap_content"
 
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="84dp"
         android:layout_marginEnd="24dp"
         android:text="@string/about_board"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/text_share_url" />
 
     <TextView
         android:id="@+id/text_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="40dp"
         android:text="@string/name_board"
-        app:layout_constraintTop_toBottomOf="@+id/text_about"
+        app:layout_constraintStart_toStartOf="parent"
 
-        tools:layout_editor_absoluteX="47dp" />
+        app:layout_constraintTop_toBottomOf="@+id/text_about" />
 
     <TextView
         android:id="@+id/text_name_value"
@@ -37,86 +38,109 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginTop="40dp"
-        android:text="2324"
+        android:text="@string/None"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_name"
 
         android:textIsSelectable="true"
         app:layout_constraintStart_toEndOf="@+id/text_name"
         app:layout_constraintTop_toBottomOf="@+id/text_about" />
 
+  
+    
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/text_descrip_board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
-        android:layout_marginTop="68dp"
-        android:text="TextView"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/descrip_board"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/text_name" />
+
+
+    <TextView
+        android:id="@+id/tv_name_value"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/None"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_descrip_board"
+
         android:textIsSelectable="true"
+        app:layout_constraintStart_toEndOf="@+id/text_descrip_board"
+        app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toBottomOf="@+id/text_name_value" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:text="@string/about_board"
-        app:layout_constraintTop_toBottomOf="@+id/text_name"
-        tools:layout_editor_absoluteX="50dp" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/tv_share_board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_marginStart="24dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="76dp"
         android:layout_marginEnd="24dp"
         android:text="@string/share_board"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/text_share_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="40dp"
         android:text="@string/share_id"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
     <TextView
-        android:id="@+id/textView11"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_share_id"
+        android:layout_width="42dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="104dp"
-        android:text="TextView"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/None"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_share_id"
+
         android:textIsSelectable="true"
+        app:layout_constraintStart_toEndOf="@+id/text_share_id"
+        app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
-        app:layout_constraintStart_toEndOf="@+id/textView10"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/text_share_url"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="40dp"
         android:text="@string/share_url"
-        app:layout_constraintTop_toBottomOf="@+id/textView10"
-        tools:layout_editor_absoluteX="30dp" />
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/text_share_id" />
+
 
     <TextView
-        android:id="@+id/textView16"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_share_url"
+        android:layout_width="42dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="104dp"
-        android:text="TextView"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/None"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_share_url"
+
         android:textIsSelectable="true"
-        app:layout_constraintStart_toEndOf="@+id/textView15"
-        app:layout_constraintTop_toBottomOf="@+id/textView11" />
+        app:layout_constraintStart_toEndOf="@+id/text_share_url"
+        app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
