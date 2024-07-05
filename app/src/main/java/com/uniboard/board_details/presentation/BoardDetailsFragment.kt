@@ -16,5 +16,6 @@ class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details)
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBoardDetailsBinding.bind(view)
         val id = arguments?.getString("id")
+
     }
 }
