@@ -2,4 +2,7 @@
     <string name="app_name">Uniboard</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="helpHeaderTitle">Помощь и Информация</string>
+    <string name="helpTitle1">О нашем проекте</string>
+    <string name="infoUniboard">Uniboard - это онлайн платформа для совместной работы, позволяющая проводить мозговые штурмы и создавать потрясающие идеи. Она обладает множеством функций гармонично сочетающихся с минималистичным дизайном.</string>
 </resources>

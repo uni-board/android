@@ -74,6 +74,8 @@ powerAssert {
 }
 
 dependencies {
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.core.ktx)
