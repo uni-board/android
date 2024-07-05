@@ -1,13 +1,17 @@
 package com.uniboard.board.data
 
+import com.uniboard.board.domain.Connection
 import com.uniboard.board.domain.RemoteObject
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.UObjectUpdate
 import io.socket.client.IO
 import io.socket.client.Socket
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -55,13 +59,33 @@ class RemoteObjectModifierImpl(
         }
     }
 
+    override val connection = object : Connection {
+        override val isConnected = MutableStateFlow(false)
+
+        init {
+            coroutineScope.launch {
+                while (true) {
+                    isConnected.value = socket.connected()
+                    delay(100)
+                }
+            }
+        }
+
+        override fun connect() {
+            socket.connect()
+        }
+
+        override fun disconnect() {
+            socket.disconnect()
+        }
+    }
+
     override suspend fun send(update: UObjectUpdate): Result<Unit> = kotlin.runCatching {
         when (update) {
             is UObjectUpdate.Add -> socket.emit("created", Json.encodeToString(update.obj.state))
             is UObjectUpdate.Modify -> socket.emit("modified", Json.encodeToString(update.diff))
             is UObjectUpdate.Delete -> socket.emit("deleted", update.id)
         }
-        println(update)
         events.emit(update)
     }.onFailure { it.printStackTrace() }
 

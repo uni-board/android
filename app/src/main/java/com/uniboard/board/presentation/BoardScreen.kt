@@ -1,19 +1,20 @@
 package com.uniboard.board.presentation
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.ArcMode
-import androidx.compose.animation.core.ExperimentalAnimationSpecApi
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -39,6 +41,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Screenshot
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -52,6 +55,7 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -63,7 +67,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -74,7 +77,6 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uniboard.board.domain.RootModule
@@ -85,17 +87,14 @@ import com.uniboard.board.presentation.components.UObjectCreator
 import com.uniboard.board.presentation.components.rememberFileSaver
 import com.uniboard.board.presentation.components.transformable
 import com.uniboard.board_details.presentation.BoardDetailsDestination
-import com.uniboard.core.presentation.BoundsTransform
 import com.uniboard.core.presentation.ContainerTransformScope
 import com.uniboard.core.presentation.DefaultBoundsTransform
+import com.uniboard.core.presentation.rememberState
 import com.uniboard.core.presentation.sharedBounds
-import com.uniboard.core.presentation.theme.UniboardTheme
 import com.uniboard.help.presentation.HelpDestination
 import com.uniboard.onnboarding.presentation.OnboardingDestination
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
-import org.http4k.format.KotlinxSerialization.asJsonValue
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -148,7 +147,7 @@ fun RootModule.BoardScreen(
                     val bytes = ByteArrayOutputStream()
                     val bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-                   saver("Board.png", "image/png", ByteArrayInputStream(bytes.toByteArray()))
+                    saver("Board.png", "image/png", ByteArrayInputStream(bytes.toByteArray()))
                 }
             }
         )
@@ -280,6 +279,8 @@ private fun BottomBar(
                     ExpandedBottomBar(
                         onNavigate = onNavigate,
                         onSaveBoardClick = onSaveBoardClick,
+                        syncState = state.syncState,
+                        onConnect = { state.eventSink(BoardScreenEvent.TrySync) },
                         sharedTransitionScope = this@SharedTransitionLayout,
                         rootTransitionScope = transitionScope,
                         animatedContentScope = this@AnimatedContent,
@@ -296,6 +297,8 @@ private fun BottomBar(
 private fun ExpandedBottomBar(
     onNavigate: (event: BoardNavigationEvent) -> Unit,
     onSaveBoardClick: () -> Unit,
+    syncState: SyncState,
+    onConnect: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     rootTransitionScope: ContainerTransformScope,
     animatedContentScope: AnimatedContentScope,
@@ -313,7 +316,7 @@ private fun ExpandedBottomBar(
                 )
                 .clip(MaterialTheme.shapes.extraLarge)
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .width(200.dp)
+                .width(300.dp)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -323,6 +326,8 @@ private fun ExpandedBottomBar(
                     onNavigate(BoardNavigationEvent.GoToDetails)
                 },
                 scope = rootTransitionScope,
+                syncState = syncState,
+                onConnect = onConnect,
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -354,13 +359,15 @@ private fun ExpandedBottomBar(
 @Composable
 private fun NameOption(
     title: String,
+    syncState: SyncState,
+    onConnect: () -> Unit,
     onEdit: () -> Unit,
     scope: ContainerTransformScope,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier.padding(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -372,6 +379,7 @@ private fun NameOption(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
+        Spacer(Modifier.weight(1f))
         IconButton(
             onClick = onEdit, Modifier.sharedBounds(
                 scope, BoardDetailsDestination, boundsTransform = DefaultBoundsTransform,
@@ -381,8 +389,45 @@ private fun NameOption(
         ) {
             Icon(Icons.Default.Edit, contentDescription = null)
         }
+        SyncButton(syncState, onConnect)
     }
 }
+
+@Composable
+private fun SyncButton(
+    syncState: SyncState,
+    onConnect: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val containerColor by animateColorAsState(
+        if (syncState != SyncState.NotSynced) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.error,
+        label = "ContainerColor"
+    )
+    val contentColor by animateColorAsState(
+        if (syncState != SyncState.NotSynced) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onError,
+        label = "ContentColor"
+    )
+    val rotation by rememberInfiniteTransition(label = "Rotation")
+        .animateFloat(
+            0f, 360f, infiniteRepeatable(
+                animation = tween(1000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ), label = "Rotation"
+        )
+    IconButton(
+        onClick = onConnect,
+        modifier.graphicsLayer {
+            rotationZ = if (syncState == SyncState.SyncInProgress) rotation else 0f
+        },
+        colors = IconButtonDefaults.outlinedIconButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        )
+    ) {
+        Icon(Icons.Default.Sync, contentDescription = null)
+    }
+}
+
 
 @Composable
 private fun SaveBoardOption(onClick: () -> Unit, modifier: Modifier = Modifier) {
