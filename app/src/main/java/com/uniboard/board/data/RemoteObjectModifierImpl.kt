@@ -19,45 +19,19 @@ import java.net.URI
 
 class RemoteObjectModifierImpl(
     private val baseURL: String,
-    id: String,
+    private val id: String,
     private val coroutineScope: CoroutineScope
 ) : RemoteObjectModifier {
-    private val socket = run {
+    private var socket = createSocket()
+
+    private fun createSocket(): Socket {
         val uri = URI.create(baseURL)
         val options = IO.Options.builder()
             .build()
-        IO.socket(uri, options)
+        return IO.socket(uri, options)
     }
 
     private val events = MutableSharedFlow<UObjectUpdate>(extraBufferCapacity = 100)
-
-    init {
-        socket.connect()
-        socket.emit("connected", id)
-        socket.on("created") { added ->
-            coroutineScope.launch {
-                println(added[0])
-                events.emit(UObjectUpdate.Add(RemoteObject.toUObject(added[0].toString())))
-            }
-        }
-        socket.on("modified") { modified ->
-            coroutineScope.launch {
-                val uobj = RemoteObject.toUObject(modified[0].toString())
-                println(uobj)
-                events.emit(
-                    UObjectUpdate.Modify(
-                        diff = uobj.state
-                    )
-                )
-            }
-        }
-        socket.on("deleted") { deletedID ->
-            coroutineScope.launch {
-                println(deletedID)
-                events.emit(UObjectUpdate.Delete(deletedID[0].toString()))
-            }
-        }
-    }
 
     override val connection = object : Connection {
         override val isConnected = MutableStateFlow(false)
@@ -72,12 +46,47 @@ class RemoteObjectModifierImpl(
         }
 
         override fun connect() {
+            socket.disconnect()
+            socket = createSocket()
+            socket.initListeners()
             socket.connect()
         }
 
         override fun disconnect() {
             socket.disconnect()
         }
+    }
+    private fun Socket.initListeners() {
+        on("connect") {
+            emit("connected", id)
+        }
+        on("created") { added ->
+            coroutineScope.launch {
+                println(added[0])
+                events.emit(UObjectUpdate.Add(RemoteObject.toUObject(added[0].toString())))
+            }
+        }
+        on("modified") { modified ->
+            coroutineScope.launch {
+                val uobj = RemoteObject.toUObject(modified[0].toString())
+                println(uobj)
+                events.emit(
+                    UObjectUpdate.Modify(
+                        diff = uobj.state
+                    )
+                )
+            }
+        }
+        on("deleted") { deletedID ->
+            coroutineScope.launch {
+                println(deletedID)
+                events.emit(UObjectUpdate.Delete(deletedID[0].toString()))
+            }
+        }
+    }
+
+    init {
+        connection.connect()
     }
 
     override suspend fun send(update: UObjectUpdate): Result<Unit> = kotlin.runCatching {
