@@ -4,10 +4,12 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -18,28 +20,32 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.NoteAlt
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.ShapeLine
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.outlined.Circle
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.carousel.HorizontalUncontainedCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -107,9 +113,16 @@ private val availableModes = mutableStateListOf(
     ) { selected, onSelect, padding, modifier ->
         ShapeOptions(selected, onSelect, modifier, padding)
     },
-    ToolMode(Icons.Default.TextFields, "Text", BoardToolMode.Text()) { selected, onSelect, padding, modifier ->
+    ToolMode(
+        Icons.Default.TextFields,
+        "Text",
+        BoardToolMode.Text()
+    ) { selected, onSelect, padding, modifier ->
         TextOptions(selected, onSelect, modifier, padding)
-    }
+    },
+    ToolMode(Icons.Default.Image, "Image", BoardToolMode.Image),
+    ToolMode(Icons.Default.UploadFile, "File", BoardToolMode.File),
+    ToolMode(Icons.Default.PictureAsPdf, "Pdf", BoardToolMode.Pdf)
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -223,38 +236,34 @@ private val defaultColors = listOf(
     Color.Magenta,
     Color.White
 )
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 private fun ColorCarousel(
     selectedColor: Color,
     onSelect: (Color) -> Unit,
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues(),
-    colors: List<Color> =  defaultColors
+    colors: List<Color> = defaultColors
 ) {
-   val state = rememberCarouselState { colors.size }
-    HorizontalUncontainedCarousel(
-        state,
-        modifier = modifier.fillMaxWidth(),
-        itemWidth = 48.dp,
-        itemSpacing = 4.dp,
+    HorizontalPager(
+        rememberPagerState { colors.size },
+        modifier = modifier
+            .fillMaxWidth(),
+        pageSpacing = 4.dp,
+        pageSize = PageSize.Fixed(48.dp),
         contentPadding = padding
     ) { index ->
         val color = colors[index]
+        val radius by animateFloatAsState(if (color == selectedColor) 20f else 50f, label = "radius")
+        val shape = RoundedCornerShape(percent = radius.toInt())
         Box(
             Modifier
-                .maskBorder(
-                    BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.tertiary
-                    ), CircleShape
-                )
-                .maskClip(CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.tertiary, shape)
+                .clip(shape)
                 .size(48.dp)
                 .background(color)
                 .clickable {
                     onSelect(color)
-                    println("Selected")
                 }, contentAlignment = Alignment.Center
         ) {
             AnimatedVisibility(
@@ -278,9 +287,9 @@ private fun NoteOptions(
     modifier: Modifier = Modifier,
     padding: PaddingValues = PaddingValues()
 ) {
-    ColorCarousel(selectedMode.color?.color?: Color.Black, onSelect = { color ->
+    ColorCarousel(selectedMode.color?.color ?: Color.Black, onSelect = { color ->
         onSelect(BoardToolMode.Note(ColorType.entries.first { it.color == color }))
-    }, modifier, padding, colors = remember { ColorType.entries.map { it.color } })
+    }, modifier.fillMaxWidth(), padding, colors = remember { ColorType.entries.map { it.color } })
 }
 
 private data class Shape(
