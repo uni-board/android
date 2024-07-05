@@ -1,7 +1,11 @@
 package com.uniboard.board.presentation
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -34,6 +38,7 @@ import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Screenshot
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -53,15 +58,20 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.layer.drawLayer
+import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,6 +82,7 @@ import com.uniboard.board.presentation.components.BoardToolbar
 import com.uniboard.board.presentation.components.BoardToolbarEvent
 import com.uniboard.board.presentation.components.UObject
 import com.uniboard.board.presentation.components.UObjectCreator
+import com.uniboard.board.presentation.components.rememberFileSaver
 import com.uniboard.board.presentation.components.transformable
 import com.uniboard.board_details.presentation.BoardDetailsDestination
 import com.uniboard.core.presentation.BoundsTransform
@@ -81,9 +92,12 @@ import com.uniboard.core.presentation.sharedBounds
 import com.uniboard.core.presentation.theme.UniboardTheme
 import com.uniboard.help.presentation.HelpDestination
 import com.uniboard.onnboarding.presentation.OnboardingDestination
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import org.http4k.format.KotlinxSerialization.asJsonValue
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 @Immutable
 sealed interface BoardNavigationEvent {
@@ -116,17 +130,35 @@ fun RootModule.BoardScreen(
     modifier: Modifier = Modifier
 ) {
     val updatedState by rememberUpdatedState(state)
+    val scope = rememberCoroutineScope()
+    val graphicsLayer = rememberGraphicsLayer()
     BackHandler(enabled = updatedState.showMore) {
         if (updatedState.showMore) {
             updatedState.eventSink(BoardScreenEvent.ShowMore(show = false))
         }
     }
+    val saver = rememberFileSaver()
     Scaffold(modifier, bottomBar = {
-        BottomBar(state, transitionScope, onNavigate)
-    }) {
-        Board(
-            state
+        BottomBar(
+            state = state,
+            transitionScope = transitionScope,
+            onNavigate = onNavigate,
+            onSaveBoardClick = {
+                scope.launch {
+                    val bytes = ByteArrayOutputStream()
+                    val bitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                   saver("Board.png", "image/png", ByteArrayInputStream(bytes.toByteArray()))
+                }
+            }
         )
+    }) {
+        Board(state, Modifier.drawWithContent {
+            graphicsLayer.record {
+                this@drawWithContent.drawContent()
+            }
+            drawLayer(graphicsLayer)
+        })
     }
 }
 
@@ -178,7 +210,12 @@ private fun RootModule.TransformableUObject(
     obj: UiUObject, state: BoardScreenState, modifier: Modifier = Modifier
 ) {
     val updatedState by rememberUpdatedState(state)
-    val transformedObj by rememberUpdatedState(obj.copy(editable = state.toolMode is BoardToolMode.Edit, selectable = state.toolMode is BoardToolMode.View))
+    val transformedObj by rememberUpdatedState(
+        obj.copy(
+            editable = state.toolMode is BoardToolMode.Edit,
+            selectable = state.toolMode is BoardToolMode.View
+        )
+    )
     UObject(transformedObj, onModify = { newObj ->
         state.eventSink(
             BoardScreenEvent.TransformObject(
@@ -222,6 +259,7 @@ private fun BottomBar(
     state: BoardScreenState,
     transitionScope: ContainerTransformScope,
     onNavigate: (event: BoardNavigationEvent) -> Unit,
+    onSaveBoardClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     SharedTransitionLayout(modifier) {
@@ -241,6 +279,7 @@ private fun BottomBar(
                 } else {
                     ExpandedBottomBar(
                         onNavigate = onNavigate,
+                        onSaveBoardClick = onSaveBoardClick,
                         sharedTransitionScope = this@SharedTransitionLayout,
                         rootTransitionScope = transitionScope,
                         animatedContentScope = this@AnimatedContent,
@@ -256,6 +295,7 @@ private fun BottomBar(
 @OptIn(ExperimentalSharedTransitionApi::class)
 private fun ExpandedBottomBar(
     onNavigate: (event: BoardNavigationEvent) -> Unit,
+    onSaveBoardClick: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     rootTransitionScope: ContainerTransformScope,
     animatedContentScope: AnimatedContentScope,
@@ -286,6 +326,7 @@ private fun ExpandedBottomBar(
                 modifier = Modifier
                     .fillMaxWidth()
             )
+            SaveBoardOption(onSaveBoardClick, Modifier.fillMaxWidth())
             HelpOption(
                 onClick = {
                     onNavigate(BoardNavigationEvent.GoToHelp)
@@ -297,12 +338,14 @@ private fun ExpandedBottomBar(
                     )
                     .fillMaxWidth()
             )
-            QuitOption(onClick = {
-                onNavigate(BoardNavigationEvent.Quit)
-            },
+            QuitOption(
+                onClick = {
+                    onNavigate(BoardNavigationEvent.Quit)
+                },
                 Modifier
                     .sharedBounds(rootTransitionScope, OnboardingDestination)
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+            )
         }
     }
 }
@@ -338,6 +381,14 @@ private fun NameOption(
         ) {
             Icon(Icons.Default.Edit, contentDescription = null)
         }
+    }
+}
+
+@Composable
+private fun SaveBoardOption(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    MenuOption(onClick, modifier, backgroundColor = MaterialTheme.colorScheme.primaryContainer) {
+        Icon(Icons.Default.Screenshot, contentDescription = null)
+        Text("Screenshot")
     }
 }
 
