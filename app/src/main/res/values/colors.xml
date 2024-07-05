@@ -13,4 +13,7 @@
     <color name="green_dark">#122812</color>
     <color name="gray_light">#BAAEA0</color>
     <color name="pink">#FF7D9F</color>
+    <color name="orange1">#FF9800</color>
+    <color name="orange2">#FFC97A</color>
+    <color name="orange3">#FFAF3D</color>
 </resources>
