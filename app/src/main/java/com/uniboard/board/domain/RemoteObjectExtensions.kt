@@ -43,7 +43,11 @@ object RemoteObject {
         )
     }
 
-    fun create(type: String, block: MutableMap<String, JsonElement>.() -> Unit): UObject {
+    fun create(
+        type: String,
+        rootType: String = if (type.startsWith("uniboard")) "group" else type,
+        block: MutableMap<String, JsonElement>.() -> Unit
+    ): UObject {
         val id = UUID.randomUUID()
         val state = mutableMapOf<String, JsonElement>()
         state.apply {
@@ -55,7 +59,7 @@ object RemoteObject {
                 )
             )
             this["uniboardData"] = uniboardData
-            this["type"] = JsonPrimitive(if (type.startsWith("uniboard")) "group" else type)
+            this["type"] = JsonPrimitive(rootType)
             this["version"] = "5.3.0".asJsonValue()
         }
         state.block()

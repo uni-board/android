@@ -2,11 +2,12 @@ package com.uniboard.board.presentation.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObject
 import com.uniboard.board.presentation.BoardToolMode
 
 @Composable
-fun UObjectCreator(
+fun RootModule.UObjectCreator(
     mode: BoardToolMode,
     onCreate: (UObject) -> Unit,
     modifier: Modifier = Modifier
@@ -16,6 +17,9 @@ fun UObjectCreator(
         is BoardToolMode.Pen -> PathObjectCreator(mode, onCreate, modifier)
         is BoardToolMode.Shape -> CustomPathObjectCreator(mode, onCreate, modifier)
         is BoardToolMode.Text -> TextObjectCreator(mode, onCreate, modifier)
+        is BoardToolMode.Image -> ImageObjectCreator(onCreate, modifier)
+        is BoardToolMode.File -> FileObjectCreator(onCreate, modifier)
+        is BoardToolMode.Pdf -> PdfObjectCreator(onCreate, modifier)
         else -> {}
     }
 }
