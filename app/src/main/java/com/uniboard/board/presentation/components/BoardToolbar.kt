@@ -4,10 +4,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,9 +21,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -28,7 +34,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Edit
@@ -39,13 +44,10 @@ import androidx.compose.material.icons.filled.ShapeLine
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.outlined.Circle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -65,6 +67,7 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.uniboard.board.presentation.BoardToolMode
@@ -245,36 +248,40 @@ private fun ColorCarousel(
     padding: PaddingValues = PaddingValues(),
     colors: List<Color> = defaultColors
 ) {
-    HorizontalPager(
-        rememberPagerState { colors.size },
+    LazyRow(
         modifier = modifier
             .fillMaxWidth(),
-        pageSpacing = 4.dp,
-        pageSize = PageSize.Fixed(48.dp),
-        contentPadding = padding
-    ) { index ->
-        val color = colors[index]
-        val radius by animateFloatAsState(if (color == selectedColor) 20f else 50f, label = "radius")
-        val shape = RoundedCornerShape(percent = radius.toInt())
-        Box(
-            Modifier
-                .border(2.dp, MaterialTheme.colorScheme.tertiary, shape)
-                .clip(shape)
-                .size(48.dp)
-                .background(color)
-                .clickable {
-                    onSelect(color)
-                }, contentAlignment = Alignment.Center
-        ) {
-            AnimatedVisibility(
-                color == selectedColor,
-                enter = scaleIn(),
-                exit = scaleOut()
+        contentPadding = padding,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items(colors.size) { index ->
+            val color = colors[index]
+            val radius by animateFloatAsState(
+                if (color == selectedColor) 20f else 50f,
+                label = "radius"
+            )
+            val shape = RoundedCornerShape(percent = radius.toInt())
+            Box(
+                Modifier
+                    .border(2.dp, MaterialTheme.colorScheme.tertiary, shape)
+                    .clip(shape)
+                    .size(48.dp)
+                    .background(color)
+                    .clickable {
+                        onSelect(color)
+                    }, contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Check, contentDescription = null,
-                    tint = if (color.luminance() > 0.5f) Color.Black else Color.White
-                )
+                AnimatedVisibility(
+                    color == selectedColor,
+                    enter = scaleIn(),
+                    exit = scaleOut()
+                ) {
+                    Icon(
+                        Icons.Default.Check, contentDescription = null,
+                        tint = if (color.luminance() > 0.5f) Color.Black else Color.White
+                    )
+                }
             }
         }
     }
@@ -324,43 +331,70 @@ private fun ShapeOptions(
                 .padding(padding)
         ) {
             val primary = MaterialTheme.colorScheme.primary
-            shapes.forEach { shape ->
-                NavigationRailItem(
-                    selected = selectedMode.type == shape.type,
-                    onClick = { onSelect(selectedMode.copy(type = shape.type)) },
-                    icon = {
-                        Box(
-                            Modifier
-                                .drawBehind {
-                                    drawPath(
-                                        Path().also { shape.path(it, size) }, primary,
-                                        style = if (selectedMode.fill == true && shape.supportsFill) Fill else Stroke(
-                                            width = 10f
+            shapes.forEachIndexed { index, shape ->
+                AnimatedContent(selectedMode.fill, transitionSpec = {
+                    val animationSpec = tween<Float>(delayMillis = index * 50)
+                    scaleIn(animationSpec) + fadeIn(animationSpec) togetherWith
+                            scaleOut(animationSpec) + fadeOut(animationSpec) using
+                            SizeTransform(clip = false)
+                }, label = "Shape") { fill ->
+                    NavigationRailItem(
+                        selected = selectedMode.type == shape.type,
+                        onClick = {
+                            onSelect(selectedMode.copy(type = shape.type))
+                        },
+                        icon = {
+                            Box(
+                                Modifier
+                                    .drawBehind {
+                                        drawPath(
+                                            Path().also { shape.path(it, size) }, primary,
+                                            style = if (fill == true && shape.supportsFill) Fill else Stroke(
+                                                width = 3.dp.toPx()
+                                            )
                                         )
-                                    )
-                                }
-                                .size(24.dp)
-                        )
-                    }
-                )
+                                    }
+                                    .size(24.dp)
+                            )
+                        })
+                }
             }
         }
-        TextButton(onClick = {
-            onSelect(
-                selectedMode.copy(
-                    fill = !(selectedMode.fill ?: true)
+        Row(
+            Modifier.padding(
+                horizontal = padding.calculateStartPadding(
+                    LocalLayoutDirection.current
                 )
+            ),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Slider(
+                selectedMode.strokeWidth ?: 10f, onValueChange = {
+                    onSelect(selectedMode.copy(strokeWidth = it))
+                }, valueRange = 5f..60f, modifier = Modifier.weight(1f)
             )
-        }) {
-            Icon(
-                if (selectedMode.fill == true) Icons.Filled.Circle else Icons.Outlined.Circle,
-                null
+            val radius by animateFloatAsState(
+                if (selectedMode.fill == true) 1f else 0f,
+                label = "radius"
             )
-            Text("Fill")
+            val primary = MaterialTheme.colorScheme.primary
+            Box(
+                Modifier
+                    .drawBehind {
+                        drawCircle(primary, radius * size.minDimension / 2)
+                        drawCircle(primary, size.minDimension / 2, style = Stroke(3.dp.toPx()))
+                    }
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        onSelect(
+                            selectedMode.copy(
+                                fill = !(selectedMode.fill ?: true)
+                            )
+                        )
+                    })
         }
-        Slider(selectedMode.strokeWidth ?: 10f, onValueChange = {
-            onSelect(selectedMode.copy(strokeWidth = it))
-        }, valueRange = 5f..60f)
         ColorCarousel(selectedMode.color ?: Color.Black, onSelect = {
             onSelect(selectedMode.copy(color = it))
         }, modifier, padding)
