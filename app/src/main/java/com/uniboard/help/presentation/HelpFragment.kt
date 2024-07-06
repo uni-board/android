@@ -6,8 +6,6 @@ import com.uniboard.R
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentHelpBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation.findNavController
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -37,10 +35,8 @@ class HelpFragment : NavigationFragment(R.layout.fragment_help) {
         adapter = InfoAdapter(
             list = ItemsRepository.items,
             onClick = {
-                val bundle = Bundle()
                 binding?.run {
-                    bundle.putString("ARG", id.toString())
-                    navController.navigate(HelpDetailsDestination(id.toString()))
+                    navController.navigate(HelpDetailsDestination(it.id))
                 }
 
             })
