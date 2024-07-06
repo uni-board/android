@@ -79,6 +79,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.uniboard.BuildConfig
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.presentation.components.BoardToolbar
 import com.uniboard.board.presentation.components.BoardToolbarEvent
@@ -215,6 +216,7 @@ private fun RootModule.TransformableUObject(
             selectable = state.toolMode is BoardToolMode.View
         )
     )
+    val borderModifier = if (BuildConfig.SHOW_BORDERS) Modifier.border(1.dp, Color.Blue) else Modifier
     UObject(transformedObj, onModify = { newObj ->
         state.eventSink(
             BoardScreenEvent.TransformObject(
@@ -238,7 +240,7 @@ private fun RootModule.TransformableUObject(
                     )
                 )
             }
-            .border(1.dp, Color.Blue)
+            .then(borderModifier)
             .pointerInput(Unit) {
                 detectTapGestures {
                     if (updatedState.toolMode is BoardToolMode.Delete) {
