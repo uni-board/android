@@ -18,7 +18,7 @@ class DetailsHelpInfo: NavigationFragment(R.layout.details_help_info) {
         super.onViewCreated(view, savedInstanceState)
         binding = DetailsHelpInfoBinding.bind(view)
 
-        val id = arguments?.getString("ARG")?:"ERROR"
+        val id = arguments?.getString("arg")?:"ERROR"
         val music = ItemsRepository.items.find { it.id == id.toInt()}
 
 
