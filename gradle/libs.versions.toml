@@ -3,6 +3,7 @@ agp = "8.4.2"
 coil = "2.6.0"
 constraintlayout = "2.2.0-alpha13"
 constraintlayoutCompose = "1.1.0-alpha13"
+design = "28.0.0"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -10,6 +11,7 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.3"
 activity = "1.9.0"
+materialVersion = "1.4.0"
 viewmodelCompose = "2.8.3"
 composeBom = "2024.06.00"
 compose = "1.7.0-beta04"
@@ -24,7 +26,10 @@ kotlinSerialization = "1.7.0"
 [libraries]
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+design = { module = "com.android.support:design", version.ref = "design" }
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -43,6 +48,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 androidx-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose"}
 androidx-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "viewmodelCompose" }
+material-v140 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 molecule = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
 androidx-fragment-compose = { module = "androidx.fragment:fragment-compose", version.ref = "fragment"}
