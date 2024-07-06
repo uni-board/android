@@ -86,7 +86,9 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     arguments = it.arguments,
                     key = OnboardingDestination,
                     scope = containerTransformScope(this)
-                )
+                ) {
+                    // init from Root Module
+                }
             }
             composable<HelpDestination> {
                 AnimatedNavigationFragment<HelpFragment>(
@@ -94,7 +96,9 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     scope = containerTransformScope(this),
                     arguments = it.arguments,
                     key = HelpDestination
-                )
+                ) {
+
+                }
             }
             composable<BoardDetailsDestination> {
                 AnimatedNavigationFragment<BoardDetailsFragment>(
@@ -103,7 +107,9 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     scope = containerTransformScope(this),
                     key = BoardDetailsDestination,
                     boundsTransform = DefaultBoundsTransform
-                )
+                ) {
+                    // init from Root Module
+                }
             }
         }
     }
@@ -117,7 +123,8 @@ private inline fun <reified T : NavigationFragment> AnimatedNavigationFragment(
     key: Any,
     modifier: Modifier = Modifier,
     arguments: Bundle? = null,
-    boundsTransform: BoundsTransform = com.uniboard.core.presentation.BoundsTransform()
+    boundsTransform: BoundsTransform = com.uniboard.core.presentation.BoundsTransform(),
+    noinline onUpdate: T.() -> Unit = {}
 ) {
     AndroidNavigationFragment<T>(
         navController, arguments = arguments,
@@ -132,6 +139,7 @@ private inline fun <reified T : NavigationFragment> AnimatedNavigationFragment(
                 boundsTransform = boundsTransform
             )
             .background(MaterialTheme.colorScheme.surface)
-            .fillMaxSize()
+            .fillMaxSize(),
+        onUpdate = onUpdate
     )
 }

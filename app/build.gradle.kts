@@ -31,6 +31,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("boolean", "SHOW_BORDERS", rootProject.properties["app.show_borders"]?.toString() ?: "false")
     }
 
     buildTypes {
@@ -55,6 +56,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
