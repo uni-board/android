@@ -108,7 +108,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     key = BoardDetailsDestination,
                     boundsTransform = DefaultBoundsTransform
                 ) {
-                    this.baseUrl = baseUrl
+                    this.baseUrl = this@Navigation.baseUrl
 
                 }
             }
