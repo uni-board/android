@@ -13,9 +13,12 @@ class BoardSettingsRepositoryImpl : BoardSettingsRepository {
     }
 
     override suspend fun setSettings(settings: BoardSettings): Result<Unit> {
-        val request = Request(Method.POST, "/path")
-            .body(json.encodeToString(settings))
-        val response: Response = httpClient(request)
+        TODO("Not yet implemented")
+
+//        val request = Request(Method.POST, "/path")
+//        return
+//            .body(json.encodeToString(settings))
+//        val response: Response = httpClient(request)
 
     }
 }
