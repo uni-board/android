@@ -11,10 +11,12 @@ import androidx.navigation.NavController
 inline fun <reified T : NavigationFragment> AndroidNavigationFragment(
     navController: NavController,
     modifier: Modifier = Modifier,
-    arguments: Bundle? = null
+    arguments: Bundle? = null,
+    noinline onUpdate: T.() -> Unit = {}
 ) {
     AndroidFragment<T>(modifier = modifier, arguments = arguments ?: Bundle.EMPTY) {
         it.navController = navController
+        onUpdate(it)
     }
 }
 
