@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f0f0f0"
-        >
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0f0f0"
+    tools:context="help.presentation.HelpFragment">
 
 
     <ImageView
@@ -21,18 +21,18 @@
         tools:ignore="MissingConstraints" />
 
     <TextView
-            android:id="@+id/helpHeaderText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/green_middle"
-            android:padding="16dp"
-            android:text="@string/helpHeaderTitle"
-            android:textColor="#ffffff"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+        android:id="@+id/helpHeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/green_middle"
+        android:padding="16dp"
+        android:text="@string/helpHeaderTitle"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -81,21 +81,19 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMusic"
+            android:id="@+id/rvItems"
 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tips_section"
             tools:itemCount="10"
-            tools:listitem="@layout/item_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            tools:listitem="@layout/item_info">
 
         </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

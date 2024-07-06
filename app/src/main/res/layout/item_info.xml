@@ -15,18 +15,35 @@ app:cardElevation="8dp">
     android:paddingHorizontal="0dp"
     android:paddingVertical="0dp">
 
+    <ImageView
+        android:id="@+id/small_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="16dp"
+        android:elevation="5dp"
+        android:src="@drawable/visibility"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <TextView
+        android:id="@+id/text_short"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:background="#ffffff"
         android:elevation="4dp"
         android:padding="16dp"
+        android:paddingStart="72dp"
         android:text="Совет 1: Описание полезного совета или инструкции."
         android:textColor="#000000"
         android:textSize="16sp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="0dp">
+
+
+    </TextView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

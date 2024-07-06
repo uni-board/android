@@ -65,6 +65,12 @@ android {
             pickFirsts += "META-INF/*"
         }
     }
+    buildFeatures{
+        viewBinding = true
+    }
+    viewBinding {
+        val enabled = true
+    }
 }
 
 // Not working yet
@@ -74,8 +80,6 @@ powerAssert {
 }
 
 dependencies {
-    implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.core.ktx)
