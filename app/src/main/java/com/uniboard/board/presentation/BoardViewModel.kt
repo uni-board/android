@@ -1,6 +1,8 @@
 package com.uniboard.board.presentation
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,9 +20,11 @@ import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObjectUpdate
+import com.uniboard.core.presentation.rememberState
 import com.uniboard.util.mutate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.reflect.KClass
@@ -38,8 +42,15 @@ data class BoardScreenState(
     val toolMode: BoardToolMode,
     val showToolOptions: Boolean,
     val showMore: Boolean,
+    val syncState: SyncState,
     val eventSink: (BoardScreenEvent) -> Unit
 )
+
+enum class SyncState {
+    Synced,
+    SyncInProgress,
+    NotSynced
+}
 
 @Immutable
 sealed interface BoardToolMode {
@@ -130,6 +141,7 @@ sealed interface BoardScreenEvent {
     data class DeleteObject(val id: String) : BoardScreenEvent
 
     data class ShowMore(val show: Boolean) : BoardScreenEvent
+    data object TrySync: BoardScreenEvent
 }
 
 
@@ -169,34 +181,52 @@ class BoardViewModel(
                     BoardToolMode.View::class
                 )
             }
+            var syncState by rememberState { SyncState.SyncInProgress }
+            val isConnected by modifier.connection.isConnected.collectAsState()
+            LaunchedEffect(isConnected) {
+                if (!isConnected) syncState = SyncState.NotSynced
+            }
             val objects by produceState(listOf<UiUObject>()) {
-                val result = repository.allObjects()
-                result.onSuccess { objects ->
-                    value = objects.map { it.toUiUObject(baseUrl = baseUrl) }
-                }
-                modifier.receive().collect { update ->
-                    when (update) {
-                        is UObjectUpdate.Add -> value += update.obj.toUiUObject(baseUrl = baseUrl)
-                        is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
-                        is UObjectUpdate.Modify -> {
-                            val diffId = RemoteObject.idFromDiff(update.diff)
-                            value = value.map {
-                                if (it.id == diffId) {
-                                    RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
-                                        .toUiUObject(baseUrl = baseUrl)
-                                } else it
+                launch {
+                    modifier.connection.isConnected.collectLatest { isConnected ->
+                        if (isConnected) {
+                            syncState = SyncState.SyncInProgress
+                            val result = repository.allObjects()
+                            result.onSuccess { objects ->
+                                value = objects.map { it.toUiUObject(baseUrl = baseUrl) }
+                                syncState = SyncState.Synced
                             }
                         }
+                    }
+                }
+                launch {
+                    modifier.receive().collect { update ->
+                        syncState = SyncState.SyncInProgress
+                        when (update) {
+                            is UObjectUpdate.Add -> value += update.obj.toUiUObject(baseUrl = baseUrl)
+                            is UObjectUpdate.Delete -> value = value.filter { it.id != update.id }
+                            is UObjectUpdate.Modify -> {
+                                val diffId = RemoteObject.idFromDiff(update.diff)
+                                value = value.map {
+                                    if (it.id == diffId) {
+                                        RemoteObject.toUObjectFromDiff(it.toUObject(), update.diff)
+                                            .toUiUObject(baseUrl = baseUrl)
+                                    } else it
+                                }
+                            }
+                        }
+                        syncState = SyncState.Synced
                     }
                 }
             }
             var showToolOptions by remember { mutableStateOf(false) }
             var showMore by remember { mutableStateOf(false) }
             BoardScreenState(
-                objects,
-                toolModes[currentToolMode] ?: BoardToolMode.View,
-                showToolOptions,
-                showMore
+                objects = objects,
+                toolMode = toolModes[currentToolMode] ?: BoardToolMode.View,
+                showToolOptions = showToolOptions,
+                showMore = showMore,
+                syncState = syncState
             ) { event ->
                 when (event) {
                     is BoardScreenEvent.TransformObject -> modifyObject(
@@ -227,6 +257,7 @@ class BoardViewModel(
                     }
 
                     is BoardScreenEvent.ShowMore -> showMore = event.show
+                    BoardScreenEvent.TrySync -> modifier.connection.connect()
                 }
             }
         }

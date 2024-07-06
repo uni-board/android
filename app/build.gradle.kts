@@ -31,6 +31,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("boolean", "SHOW_BORDERS", rootProject.properties["app.show_borders"]?.toString() ?: "false")
     }
 
     buildTypes {
@@ -55,6 +56,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -74,6 +76,9 @@ powerAssert {
 }
 
 dependencies {
+    implementation(libs.material.v140)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.core.ktx)
