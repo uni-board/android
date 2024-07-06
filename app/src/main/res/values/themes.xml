@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Uniboard1" parent="Theme.AppCompat.DayNight.NoActionBar" />
+    <style name="Theme.Uniboard" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- ... -->
+    </style>
 
-    <style name="Theme.Uniboard" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

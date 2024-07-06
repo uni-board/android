@@ -74,6 +74,9 @@ powerAssert {
 }
 
 dependencies {
+    implementation(libs.material.v140)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.core.ktx)
