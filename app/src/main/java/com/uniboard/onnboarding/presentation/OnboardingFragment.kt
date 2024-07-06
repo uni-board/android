@@ -8,7 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.uniboard.R
+import com.uniboard.board.presentation.BoardDestination
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentOnboardingBinding
 import kotlinx.serialization.Serializable
@@ -36,12 +39,15 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
         val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
         //val messageBoxBuilder = AlertDialog.Builder(activity).setView(messageBoxView)
             .setView(messageBoxView)
+            .setTitle(" Подключись через id")
 
-        val btnYes : Button = messageBoxView.findViewById(R.id.btnPositive)
+        val btnConnect : Button = messageBoxView.findViewById(R.id.btnPositive)
+        val id : TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
 
         val  messageBoxInstance = messageBoxBuilder.show()
-        //btnYes.setOnClickListener {
-        //}
+        btnConnect.setOnClickListener {
+            navController.navigate(BoardDestination(id.toString()))
+        }
 
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()
@@ -52,6 +58,7 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
         val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
             //val messageBoxBuilder = AlertDialog.Builder(activity).setView(messageBoxView)
             .setView(messageBoxView)
+            .setTitle(" Введи название и описание")
 
         val btnYes : Button = messageBoxView.findViewById(R.id.btnPositive)
 
