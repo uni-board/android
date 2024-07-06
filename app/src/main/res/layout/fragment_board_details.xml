@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_about" />
 
     <TextView
-        android:id="@+id/text_name_value"
+        android:id="@+id/tv_name"
         android:layout_width="42dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -61,7 +61,7 @@
 
 
     <TextView
-        android:id="@+id/tv_name_value"
+        android:id="@+id/tv_about"
         android:layout_width="42dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
@@ -142,5 +142,12 @@
         app:layout_constraintStart_toEndOf="@+id/text_share_url"
         app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
+    <ImageView
+        android:id="@+id/image_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:src="@android:drawable/ic_menu_revert"
 
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

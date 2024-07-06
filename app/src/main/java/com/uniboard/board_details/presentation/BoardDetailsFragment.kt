@@ -16,6 +16,20 @@ class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details)
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentBoardDetailsBinding.bind(view)
         val id = arguments?.getString("id")
+        init(id.toString())
+    }
+
+
+    fun init(id: String) {
+        binding?.run {
+            tvShareId?.text=id
+            tvShareUrl?.text="https://api.uniboard-api.freemyip.com/board/$id"
+            tvName?.text=""
+            tvAbout?.text=""
+            imageBack?.setOnClickListener {
+                "find"
+            }
+        }
 
     }
 }
