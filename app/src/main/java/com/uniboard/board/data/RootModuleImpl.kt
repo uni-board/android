@@ -5,6 +5,7 @@ import com.uniboard.board.domain.FileRepository
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
+import com.uniboard.onnboarding.data.BoardCreatorRepositoryImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,5 +34,8 @@ class RootModuleImpl(context: Context): RootModule {
     }
     override val pdfRenderer by lazy {
         PdfRendererImpl()
+    }
+    override val boardCreatorRepository by lazy {
+        BoardCreatorRepositoryImpl(httpClient)
     }
 }

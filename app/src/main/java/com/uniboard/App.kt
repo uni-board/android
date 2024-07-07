@@ -87,6 +87,8 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     key = OnboardingDestination,
                     scope = containerTransformScope(this)
                 ) {
+                    repository = boardCreatorRepository
+                    objectRepository = { remoteObjectRepository(it) }
                     // init from Root Module
                 }
             }
