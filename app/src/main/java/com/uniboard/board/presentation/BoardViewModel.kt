@@ -32,12 +32,14 @@ import kotlin.reflect.KClass
 fun RootModule.BoardViewModel(id: String) =
     BoardViewModel(
         baseUrl = baseUrl,
+        boardId = id,
         repository = remoteObjectRepository(id),
         modifier = remoteObjectModifier(id)
     )
 
 @Immutable
 data class BoardScreenState(
+    val boardId: String,
     val objects: List<UiUObject>,
     val toolMode: BoardToolMode,
     val showToolOptions: Boolean,
@@ -147,6 +149,7 @@ sealed interface BoardScreenEvent {
 
 class BoardViewModel(
     private val baseUrl: String,
+    val boardId: String,
     private val repository: RemoteObjectRepository,
     private val modifier: RemoteObjectModifier
 ) : ViewModel() {
@@ -220,8 +223,9 @@ class BoardViewModel(
                 }
             }
             var showToolOptions by remember { mutableStateOf(false) }
-            var showMore by remember { mutableStateOf(false) }
+            var showMore by remember { mutableStateOf(true) }
             BoardScreenState(
+                boardId = boardId,
                 objects = objects,
                 toolMode = toolModes[currentToolMode] ?: BoardToolMode.View,
                 showToolOptions = showToolOptions,

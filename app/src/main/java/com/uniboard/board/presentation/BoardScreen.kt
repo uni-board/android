@@ -38,9 +38,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Screenshot
+import androidx.compose.material.icons.filled.SwitchAccount
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -55,7 +57,6 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -77,9 +78,13 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.uniboard.BuildConfig
+import com.uniboard.R
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.presentation.components.BoardToolbar
 import com.uniboard.board.presentation.components.BoardToolbarEvent
@@ -90,7 +95,6 @@ import com.uniboard.board.presentation.components.transformable
 import com.uniboard.board_details.presentation.BoardDetailsDestination
 import com.uniboard.core.presentation.ContainerTransformScope
 import com.uniboard.core.presentation.DefaultBoundsTransform
-import com.uniboard.core.presentation.rememberState
 import com.uniboard.core.presentation.sharedBounds
 import com.uniboard.help.presentation.HelpDestination
 import com.uniboard.onnboarding.presentation.OnboardingDestination
@@ -216,7 +220,8 @@ private fun RootModule.TransformableUObject(
             selectable = state.toolMode is BoardToolMode.View
         )
     )
-    val borderModifier = if (BuildConfig.SHOW_BORDERS) Modifier.border(1.dp, Color.Blue) else Modifier
+    val borderModifier =
+        if (BuildConfig.SHOW_BORDERS) Modifier.border(1.dp, Color.Blue) else Modifier
     UObject(transformedObj, onModify = { newObj ->
         state.eventSink(
             BoardScreenEvent.TransformObject(
@@ -278,11 +283,13 @@ private fun BottomBar(
                         animatedContentScope = this@AnimatedContent
                     )
                 } else {
+                    val clipboardManager = LocalClipboardManager.current
                     ExpandedBottomBar(
                         onNavigate = onNavigate,
                         onSaveBoardClick = onSaveBoardClick,
                         syncState = state.syncState,
                         onConnect = { state.eventSink(BoardScreenEvent.TrySync) },
+                        onCopy = { clipboardManager.setText(AnnotatedString(state.boardId)) },
                         sharedTransitionScope = this@SharedTransitionLayout,
                         rootTransitionScope = transitionScope,
                         animatedContentScope = this@AnimatedContent,
@@ -301,6 +308,7 @@ private fun ExpandedBottomBar(
     onSaveBoardClick: () -> Unit,
     syncState: SyncState,
     onConnect: () -> Unit,
+    onCopy: () -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     rootTransitionScope: ContainerTransformScope,
     animatedContentScope: AnimatedContentScope,
@@ -324,6 +332,7 @@ private fun ExpandedBottomBar(
         ) {
             NameOption(
                 title = "Board",
+                onCopy = onCopy,
                 onEdit = {
                     onNavigate(BoardNavigationEvent.GoToDetails)
                 },
@@ -362,6 +371,7 @@ private fun ExpandedBottomBar(
 private fun NameOption(
     title: String,
     syncState: SyncState,
+    onCopy: () -> Unit,
     onConnect: () -> Unit,
     onEdit: () -> Unit,
     scope: ContainerTransformScope,
@@ -372,15 +382,26 @@ private fun NameOption(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            title,
+        Row(
             Modifier
                 .clip(MaterialTheme.shapes.small)
+                .clickable(onClick = onCopy)
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(8.dp),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Icon(
+                Icons.Default.ContentCopy,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
         Spacer(Modifier.weight(1f))
         IconButton(
             onClick = onEdit, Modifier.sharedBounds(
@@ -435,7 +456,7 @@ private fun SyncButton(
 private fun SaveBoardOption(onClick: () -> Unit, modifier: Modifier = Modifier) {
     MenuOption(onClick, modifier, backgroundColor = MaterialTheme.colorScheme.primaryContainer) {
         Icon(Icons.Default.Screenshot, contentDescription = null)
-        Text("Screenshot")
+        Text(stringResource(R.string.screenshot_option))
     }
 }
 
@@ -443,15 +464,15 @@ private fun SaveBoardOption(onClick: () -> Unit, modifier: Modifier = Modifier) 
 private fun HelpOption(onClick: () -> Unit, modifier: Modifier = Modifier) {
     MenuOption(onClick, modifier, backgroundColor = MaterialTheme.colorScheme.tertiaryContainer) {
         Icon(Icons.AutoMirrored.Filled.Help, contentDescription = null)
-        Text("Help")
+        Text(stringResource(R.string.help_option))
     }
 }
 
 @Composable
 private fun QuitOption(onClick: () -> Unit, modifier: Modifier = Modifier) {
     MenuOption(onClick, modifier, backgroundColor = MaterialTheme.colorScheme.surfaceVariant) {
-        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
-        Text("Exit")
+        Icon(Icons.Default.SwitchAccount, contentDescription = null)
+        Text(stringResource(R.string.another_board_option))
     }
 }
 
