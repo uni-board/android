@@ -6,6 +6,7 @@ import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.onnboarding.data.BoardCreatorRepositoryImpl
+import com.uniboard.onnboarding.data.RecentBoardsRepositoryImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,5 +38,8 @@ class RootModuleImpl(context: Context): RootModule {
     }
     override val boardCreatorRepository by lazy {
         BoardCreatorRepositoryImpl(httpClient)
+    }
+    override val recentBoardsRepository by lazy {
+        RecentBoardsRepositoryImpl(context)
     }
 }

@@ -90,6 +90,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     repository = boardCreatorRepository
                     objectRepository = { remoteObjectRepository(it) }
                     // init from Root Module
+                    this.recentsRepository = recentBoardsRepository
                 }
             }
             composable<HelpDestination> {

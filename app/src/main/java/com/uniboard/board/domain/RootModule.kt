@@ -1,6 +1,7 @@
 package com.uniboard.board.domain
 
 import com.uniboard.onnboarding.domain.BoardCreatorRepository
+import com.uniboard.onnboarding.domain.RecentBoardsRepository
 
 interface RootModule {
     fun remoteObjectRepository(id: String): RemoteObjectRepository
@@ -9,4 +10,6 @@ interface RootModule {
     val fileRepository: FileRepository
     val pdfRenderer: PdfRenderer
     val boardCreatorRepository: BoardCreatorRepository
+    val recentBoardsRepository: RecentBoardsRepository
+
 }

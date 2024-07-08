@@ -1,12 +1,12 @@
 package com.uniboard.onnboarding.presentation
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.uniboard.R
@@ -15,6 +15,8 @@ import com.uniboard.board.presentation.BoardDestination
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentOnboardingBinding
 import com.uniboard.onnboarding.domain.BoardCreatorRepository
+import com.uniboard.onnboarding.domain.RecentBoardsRepository
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 
@@ -22,12 +24,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object OnboardingDestination
 
-class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
+class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), CustomAdapter.OnItemClickListener {
+    var recentsRepository: RecentBoardsRepository? = null
     lateinit var repository: BoardCreatorRepository
     private lateinit var adapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var arrayList: ArrayList<ItemsViewModel>
-    lateinit var heading: Array<String>
+    lateinit var heading: List<String>
     lateinit var objectRepository: (String) -> RemoteObjectRepository
     private lateinit var binding: FragmentOnboardingBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,7 +43,7 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
             button2.setOnClickListener {
                 showMessageBoxCreate()
             }
-            buttonOldBoards?.setOnClickListener {
+            buttonOldBoards.setOnClickListener {
                 showMessageBoxList()
             }
         }
@@ -48,11 +51,11 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
     fun showMessageBoxList(){
         val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.dialog_list, null)
         val layoutManager = LinearLayoutManager(context)
-        dataInit()
+        lifecycleScope.launch{dataInit()}
         recyclerView = messageBoxView.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
-        adapter = CustomAdapter(arrayList)
+        adapter = CustomAdapter(arrayList, this, this)
         recyclerView.adapter = adapter
         val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
             .setView(messageBoxView)
@@ -62,6 +65,15 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
             messageBoxInstance.dismiss()
         }
     }
+
+    override fun onItemClick(position: Int, dataList: List<ItemsViewModel>) {
+        lifecycleScope.launch{navController.navigate(BoardDestination(dataList[position].heading))}
+    }
+
+    override fun onDelClick(position: Int, dataList: List<ItemsViewModel>) {
+        lifecycleScope.launch{recentsRepository!!.removeBoard(dataList[position].heading)}
+    }
+
     fun showMessageBoxConnect(){
         val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.fragment_dialog, null)
         val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
@@ -73,6 +85,7 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
         val messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
             navController.navigate(BoardDestination(textId.text.toString()))
+            messageBoxInstance.dismiss()
         }
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()
@@ -89,16 +102,17 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding) {
         val  messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
             navController.navigate(BoardDestination(id))
-            com.google.android.material.snackbar.Snackbar.make(messageBoxView, id, com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+            lifecycleScope.launch{ recentsRepository!!.addBoard(id)}
+            messageBoxInstance.dismiss()
         }
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()
         }
     }
-    // NEED TO IMPLEMENT PUTTING AN ACTUAL ID: FOR NOW IT`S PLACEHOLDER
-    private fun dataInit() {
+
+    private suspend fun dataInit() {
         arrayList = arrayListOf<ItemsViewModel>()
-        heading = arrayOf("superduperid", "megaidultra", "abracadabra", "obamaid", "ddfjfdjd")
+        heading = recentsRepository!!.getBoards()
         for (i in heading.indices) {
             val array = ItemsViewModel(heading[i])
             arrayList.add(array)

@@ -61,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/kanitblack"
-        android:text="Присоединись"
+        android:text="Создай"
         android:textColor="@color/white1"
         android:textSize="26sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView6"
@@ -116,18 +116,18 @@
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="96dp"
-        android:layout_height="43dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/kanitblack"
-        android:text="Создай"
+        android:text="Присоединись"
         android:textColor="@color/white1"
         android:textSize="26sp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.517"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.194" />
+        app:layout_constraintVertical_bias="0.2" />
 
     <TextView
         android:id="@+id/textView4"
@@ -203,7 +203,7 @@
         app:srcCompat="@drawable/rouden_corner_view" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonOldBoards"
         android:layout_width="349dp"
         android:layout_height="48dp"
         android:fontFamily="sans-serif"

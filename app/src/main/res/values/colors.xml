@@ -19,4 +19,5 @@
     <color name="orange2">#FFC97A</color>
     <color name="orange3">#FFAF3D</color>
     <color name="back_dialog">#DBDBDB</color>
+    <color name="deletebutton">#515156</color>
 </resources>
