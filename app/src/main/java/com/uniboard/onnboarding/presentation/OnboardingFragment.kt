@@ -72,7 +72,14 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), Cust
 
     override fun onDelClick(position: Int, dataList: List<ItemsViewModel>) {
         lifecycleScope.launch{recentsRepository!!.removeBoard(dataList[position].heading)}
-        adapter.notifyItemRemoved(position)
+        recyclerView.adapter!!.notifyItemRemoved(position)
+        val arrayyList = arrayListOf<ItemsViewModel>()
+        for (i in dataList) {
+            if (i != dataList[position]) {
+            arrayyList.add(i)
+            }
+        }
+        recyclerView.adapter = CustomAdapter(arrayyList, this, this)
     }
 
     fun showMessageBoxConnect(){
