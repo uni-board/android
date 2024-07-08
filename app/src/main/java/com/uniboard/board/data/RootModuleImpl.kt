@@ -6,6 +6,8 @@ import com.uniboard.board.domain.FileRepository
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
+import com.uniboard.onnboarding.data.BoardCreatorRepositoryImpl
+import com.uniboard.onnboarding.data.RecentBoardsRepositoryImpl
 import com.uniboard.board_details.presentation.data.BoardSettingsRepositoryImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +37,12 @@ class RootModuleImpl(context: Context): RootModule {
     }
     override val pdfRenderer by lazy {
         PdfRendererImpl()
+    }
+    override val boardCreatorRepository by lazy {
+        BoardCreatorRepositoryImpl(httpClient)
+    }
+    override val recentBoardsRepository by lazy {
+        RecentBoardsRepositoryImpl(context)
     }
     override fun boardSettingsRepository(id: String): BoardSettingsRepository {
         return BoardSettingsRepositoryImpl(id, httpClient)
