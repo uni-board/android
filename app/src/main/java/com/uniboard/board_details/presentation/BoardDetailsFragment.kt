@@ -1,23 +1,44 @@
 package com.uniboard.board_details.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import androidx.compose.runtime.Composable
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import androidx.lifecycle.lifecycleScope
 import com.uniboard.R
-import com.uniboard.core.presentation.AndroidNavigationFragment
+import com.uniboard.board_details.presentation.domain.BoardSettings
+import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentBoardDetailsBinding
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BoardDetailsDestination(val id: String)
 
 class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details) {
-    lateinit var baseUrl: String
+    var baseUrl: String? = null
+        set(value) {
+            if (baseUrl!=null) {
+                field = value + "/" + baseUrl
+                binding.tvShareUrl?.text = baseUrl
+            }
+            else{
+                field = value
+            }
+        }
 
-    //    public var baseUrl: String?=null
+
+    var settingsRepository: BoardSettingsRepository? = null
+        set(value) {
+            field=value
+            lifecycleScope.launch {
+                settingsRepository?.get()?.onSuccess {
+                    binding.tvName?.text = it.name
+                    binding.tvAbout?.text = it.description
+
+                }
+            }
+        }
+
     private lateinit var binding: FragmentBoardDetailsBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,24 +51,11 @@ class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details)
 
     fun init(id: String) {
 
-        binding?.run {
-            tvShareId?.text=baseUrl
-            tvShareUrl?.text="https://api.uniboard-api.freemyip.com/board/$id"
-            tvName?.text=""
-            tvAbout?.text=""
+        binding.run {
+            baseUrl=id
+            tvShareId?.text = id
             imageBack?.setOnClickListener {
                 navController.navigateUp()
-//                val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
-//                val  messageBoxInstance = messageBoxBuilder.show()
-//                val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.fragment_board_details, null)
-//
-//
-//
-//                messageBoxView.setOnClickListener {
-////                    messageBoxInstance.dismiss()
-//                    navController.navigateUp()
-//                }
-
             }
         }
 

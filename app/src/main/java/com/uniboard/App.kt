@@ -109,6 +109,7 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     boundsTransform = DefaultBoundsTransform
                 ) {
                     this.baseUrl = this@Navigation.baseUrl
+                    this.settingsRepository = boardSettingsRepository(it.toRoute<BoardDetailsDestination>().id)
 
                 }
             }

@@ -6,20 +6,32 @@
     android:layout_height="match_parent"
     tools:context=".board_details.presentation.BoardDetailsFragment">
 
+    <ImageView
+        android:id="@+id/imageViewBack2"
+        android:layout_width="336dp"
+        android:layout_height="175dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/rouden_corner_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewBack1" />
 
     <TextView
         android:id="@+id/text_about"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:layout_marginStart="24dp"
-        android:layout_marginTop="84dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:text="@string/about_board"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_share_url" />
+        app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
 
     <TextView
         android:id="@+id/text_name"
@@ -74,20 +86,33 @@
         app:layout_constraintStart_toEndOf="@+id/text_descrip_board"
         app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
+    <ImageView
+        android:id="@+id/imageViewBack1"
+        android:layout_width="336dp"
+        android:layout_height="175dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/rouden_corner_view"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_share_url"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.558"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_share_board"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:layout_marginStart="24dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:text="@string/share_board"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/imageViewBack1" />
 
     <TextView
         android:id="@+id/text_share_id"
@@ -100,21 +125,21 @@
 
         app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
+
     <TextView
         android:id="@+id/tv_share_id"
-        android:layout_width="42dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
+        android:layout_width="164dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="28dp"
         android:layout_marginTop="40dp"
         android:text="@string/None"
 
-        app:layout_constraintBaseline_toBaselineOf="@id/text_share_id"
-
         android:textIsSelectable="true"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_share_id"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
         app:layout_constraintStart_toEndOf="@+id/text_share_id"
         app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
-
-
 
     <TextView
         android:id="@+id/text_share_url"
@@ -123,22 +148,22 @@
         android:layout_marginStart="48dp"
         android:layout_marginTop="40dp"
         android:text="@string/share_url"
-        app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/text_share_id" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_share_id"
+        app:layout_constraintVertical_bias="0.0" />
 
 
     <TextView
         android:id="@+id/tv_share_url"
-        android:layout_width="42dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="142dp"
+        android:layout_height="20dp"
         android:text="@string/None"
 
-        app:layout_constraintBaseline_toBaselineOf="@id/text_share_url"
-
         android:textIsSelectable="true"
+
+        app:layout_constraintBaseline_toBaselineOf="@id/text_share_url"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
         app:layout_constraintStart_toEndOf="@+id/text_share_url"
         app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
 
