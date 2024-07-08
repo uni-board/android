@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
@@ -141,14 +141,14 @@
             android:id="@+id/tv_share_id"
             style="@style/MainText"
 
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="10dp"
-            android:text="@string/None"
+            android:layout_marginEnd="4dp"
 
+            android:text="@string/None"
             android:textIsSelectable="true"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintEnd_toStartOf="@id/imageButtonCopyId"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/text_share_id"
             app:layout_constraintTop_toBottomOf="@+id/text_share_id" />
@@ -173,33 +173,57 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="4dp"
             android:text="@string/None"
 
             android:textIsSelectable="true"
-            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintEnd_toStartOf="@+id/imageButtonCopyURL"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/text_share_url"
             app:layout_constraintTop_toBottomOf="@+id/text_share_url" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/image_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
 
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/baseline_arrow_back_24"
 
             />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/image_apply"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_menu_save"
+            android:src="@drawable/baseline_check_24"
             app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
             app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
+
+        <ImageButton
+            android:id="@+id/imageButtonCopyId"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_share_id"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_share_id"
+            app:layout_constraintTop_toTopOf="@+id/tv_share_id"
+            app:layout_constraintVertical_bias="0.5"
+            app:srcCompat="@drawable/baseline_content_copy_24" />
+        <ImageButton
+            android:id="@+id/imageButtonCopyURL"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_share_url"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_share_url"
+            app:layout_constraintTop_toTopOf="@+id/tv_share_url"
+            app:layout_constraintVertical_bias="0.5"
+            app:srcCompat="@drawable/baseline_content_copy_24" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

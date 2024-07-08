@@ -61,7 +61,7 @@ class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details)
             imageBack.setOnClickListener {
                 navController.navigateUp()
             }
-            tvShareId.setOnClickListener {
+            tvShareId.setOnClickListener{
                 context?.let { it1 -> copyToClipboard(it1, tvShareId.text) }
                 createSnackbar(it, "Copied to the clipboard", Color.GREEN)
             }
@@ -69,6 +69,15 @@ class BoardDetailsFragment : NavigationFragment(R.layout.fragment_board_details)
                 context?.let { it1 -> copyToClipboard(it1, tvShareUrl.text) }
                 createSnackbar(it, "Copied to the clipboard", Color.GREEN)
             }
+            imageButtonCopyId.setOnClickListener {
+                context?.let { it1 -> copyToClipboard(it1, tvShareId.text) }
+                createSnackbar(it, "Copied to the clipboard", Color.GREEN)
+            }
+            imageButtonCopyURL.setOnClickListener {
+                context?.let { it1 -> copyToClipboard(it1, tvShareUrl.text) }
+                createSnackbar(it, "Copied to the clipboard", Color.GREEN)
+            }
+
             imageApply.setOnClickListener {
                 lifecycleScope.launch {
                     settingsRepository?.update(
