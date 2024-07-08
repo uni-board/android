@@ -1,199 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".board_details.presentation.BoardDetailsFragment">
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/imageViewBack2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="-12dp"
-        android:src="@drawable/rouden_corner_view"
-        app:layout_constraintBottom_toBottomOf="@id/tv_about"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewBack1"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/text_about"
-        style="@style/HeadText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/about_board"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="@+id/imageViewBack2"
-        app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
-
-    <TextView
-        android:id="@+id/text_name"
-        style="@style/MainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="40dp"
-        android:text="@string/name_board"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/text_about" />
-
-
-    <EditText
-        android:id="@+id/tv_name"
-        style="@style/MainText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-
-        android:layout_marginEnd="8dp"
-        android:inputType="text"
-
-        android:text="@string/None"
-        android:textIsSelectable="true"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_name"
-        app:layout_constraintTop_toBottomOf="@+id/text_name" />
-
-    <TextView
-        android:id="@+id/text_descrip_board"
-        style="@style/MainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/descrip_board"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
-
-    <EditText
-        android:id="@+id/tv_about"
-        style="@style/MainText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/None"
-
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_descrip_board"
-        app:layout_constraintTop_toBottomOf="@+id/text_descrip_board" />
-
-    <ImageView
-        android:id="@+id/imageViewBack1"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="-16dp"
-        android:src="@drawable/rouden_corner_view"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_share_url"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_back"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_height="match_parent"
+        tools:context=".board_details.presentation.BoardDetailsFragment">
 
-    <TextView
-        android:id="@+id/tv_share_board"
-        style="@style/HeadText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:text="@string/share_board"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageViewBack1" />
+        <ImageView
+            android:id="@+id/imageViewBack2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="-12dp"
+            android:src="@drawable/rouden_corner_view"
+            app:layout_constraintBottom_toBottomOf="@id/tv_about"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewBack1"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/text_share_id"
-        style="@style/MainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/share_id"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="@+id/imageViewBack1"
-        app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
+        <TextView
+            android:id="@+id/text_about"
+            style="@style/HeadText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:text="@string/about_board"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="@+id/imageViewBack2"
+            app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
 
-    <TextView
-        android:id="@+id/tv_share_id"
-        style="@style/MainText"
+        <TextView
+            android:id="@+id/text_name"
+            style="@style/MainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/name_board"
+            app:layout_constraintStart_toStartOf="parent"
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:text="@string/None"
-
-        android:textIsSelectable="true"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_share_id"
-        app:layout_constraintTop_toBottomOf="@+id/text_share_id" />
+            app:layout_constraintTop_toBottomOf="@+id/text_about" />
 
 
-    <TextView
-        android:id="@+id/text_share_url"
-        style="@style/MainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        <EditText
+            android:id="@+id/tv_name"
+            style="@style/MainText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
 
-        android:text="@string/share_url"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="@+id/imageViewBack1"
-        app:layout_constraintTop_toBottomOf="@+id/tv_share_id" />
+            android:layout_marginEnd="8dp"
+            android:inputType="text"
 
-    <TextView
-        android:id="@+id/tv_share_url"
-        style="@style/MainText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
-        android:text="@string/None"
+            android:text="@string/None"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_name"
+            app:layout_constraintTop_toBottomOf="@+id/text_name" />
 
-        android:textIsSelectable="true"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/text_share_url"
-        app:layout_constraintTop_toBottomOf="@+id/text_share_url"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/text_descrip_board"
+            style="@style/MainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/descrip_board"
 
-    <ImageView
-        android:id="@+id/image_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
-        android:src="@android:drawable/ic_menu_revert"
+        <EditText
+            android:id="@+id/tv_about"
+            style="@style/MainText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/None"
 
-        />
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_descrip_board"
+            app:layout_constraintTop_toBottomOf="@+id/text_descrip_board" />
 
-    <ImageView
-        android:id="@+id/image_apply"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="315dp"
-        app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
-        app:layout_constraintStart_toEndOf="@+id/image_back"
-        app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imageViewBack1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="-16dp"
+            android:src="@drawable/rouden_corner_view"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_share_url"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_back"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/tv_share_board"
+            style="@style/HeadText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/share_board"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/imageViewBack1"
+            app:layout_constraintTop_toTopOf="@+id/imageViewBack1" />
+
+        <TextView
+            android:id="@+id/text_share_id"
+            style="@style/MainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/share_id"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toStartOf="@+id/imageViewBack1"
+            app:layout_constraintTop_toBottomOf="@+id/tv_share_board" />
+
+        <TextView
+            android:id="@+id/tv_share_id"
+            style="@style/MainText"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/None"
+
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_share_id"
+            app:layout_constraintTop_toBottomOf="@+id/text_share_id" />
+
+
+        <TextView
+            android:id="@+id/text_share_url"
+            style="@style/MainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+
+            android:text="@string/share_url"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toStartOf="@+id/imageViewBack1"
+            app:layout_constraintTop_toBottomOf="@+id/tv_share_id" />
+
+        <TextView
+            android:id="@+id/tv_share_url"
+            style="@style/MainText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/None"
+
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/text_share_url"
+            app:layout_constraintTop_toBottomOf="@+id/text_share_url"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/image_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+
+            android:src="@android:drawable/ic_menu_revert"
+
+            />
+
+        <ImageView
+            android:id="@+id/image_apply"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_menu_save"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewBack2"
+            app:layout_constraintTop_toTopOf="@+id/imageViewBack2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -9,4 +9,5 @@
     <string name="share_id">Поделиться по id</string>
     <string name="share_url">Поделиться по ссылке</string>
     <string name="None">None</string>
+    <string name="copy"> Copied to the clipboard</string>
 </resources>
