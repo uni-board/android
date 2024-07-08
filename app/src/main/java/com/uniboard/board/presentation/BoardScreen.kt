@@ -285,6 +285,7 @@ private fun BottomBar(
                 } else {
                     val clipboardManager = LocalClipboardManager.current
                     ExpandedBottomBar(
+                        boardName = state.boardName,
                         onNavigate = onNavigate,
                         onSaveBoardClick = onSaveBoardClick,
                         syncState = state.syncState,
@@ -304,6 +305,7 @@ private fun BottomBar(
 @Composable
 @OptIn(ExperimentalSharedTransitionApi::class)
 private fun ExpandedBottomBar(
+    boardName: String,
     onNavigate: (event: BoardNavigationEvent) -> Unit,
     onSaveBoardClick: () -> Unit,
     syncState: SyncState,
@@ -331,7 +333,7 @@ private fun ExpandedBottomBar(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             NameOption(
-                title = "Board",
+                title = boardName,
                 onCopy = onCopy,
                 onEdit = {
                     onNavigate(BoardNavigationEvent.GoToDetails)
