@@ -7,6 +7,13 @@
     <string name="infoUniboard">Uniboard - это онлайн платформа для совместной работы, позволяющая проводить мозговые штурмы и создавать потрясающие идеи. Она обладает множеством функций гармонично сочетающихся с минималистичным дизайном.</string>
     <string name="detail_help_title">Подробная информация</string>
     <string name="order_confirmation" />
+    <string name="about_board">О доске</string>
+    <string name="name_board">Имя доски</string>
+    <string name="descrip_board">Описание доски</string>
+    <string name="share_board">Поделиться доской</string>
+    <string name="share_id">Поделиться по id</string>
+    <string name="share_url">Поделиться по ссылке</string>
+    <string name="None">None</string>
     <string name="screenshot_option">Screenshot</string>
     <string name="help_option">Help</string>
     <string name="another_board_option">Another board</string>
