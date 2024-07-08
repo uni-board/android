@@ -1,14 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".help.presentation.HelpFragment">
+    android:background="#f0f0f0"
+    tools:context="help.presentation.HelpFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginEnd="8dp"
+
+        android:elevation="10dp"
+        android:src="@drawable/logowhite"
+        app:layout_constraintBottom_toBottomOf="@+id/helpHeaderText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/helpHeaderText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/green_middle"
+        android:padding="16dp"
+        android:text="@string/helpHeaderTitle"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/helpHeaderText">
+
+        <TextView
+            android:id="@+id/about_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/greeny"
+            android:elevation="4dp"
+            android:padding="16dp"
+            android:text="@string/helpTitle1"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="#ffffff"
+            android:elevation="4dp"
+            android:padding="16dp"
+            android:text="@string/infoUniboard"
+            android:textColor="#000000"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tips_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/greeny"
+            android:elevation="4dp"
+            android:padding="16dp"
+            android:text="Полезные советы и инструменты"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvItems"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tips_section"
+            tools:itemCount="10"
+            tools:listitem="@layout/item_info">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
