@@ -2,7 +2,6 @@ package com.uniboard.onnboarding.presentation
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
@@ -36,25 +35,10 @@ class CustomAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-
-        //    View.OnClickListener {
         val titleTextView: TextView = view.findViewById(R.id.textView)
         val btnDelview: Button = view.findViewById(R.id.delete)
-
-//        override fun onClick(p0: View?) {
-//            val position: Int = adapterPosition
-//            val list = dataList
-//            if (position != RecyclerView.NO_POSITION) {
-//                listener1.onItemClick(position, list)
-//            }
-//        }
-
-//        init {
-//            view.setOnClickListener(this)
-//        }
-//
     }
+
     interface OnItemClickListener {
         fun onItemClick(position: Int, dataList: List<ItemsViewModel>)
         fun onDelClick(position: Int, dataList: List<ItemsViewModel>)
