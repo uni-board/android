@@ -1,6 +1,6 @@
-package com.uniboard.board_details.presentation.domain
+package com.uniboard.board_details.domain
 
-import com.uniboard.board_details.presentation.domain.BoardSettings
+import com.uniboard.board_details.domain.BoardSettings
 
 interface BoardSettingsRepository {
     suspend fun get(): Result<BoardSettings>

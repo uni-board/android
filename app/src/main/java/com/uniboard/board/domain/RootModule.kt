@@ -1,6 +1,6 @@
 package com.uniboard.board.domain
 
-import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
+import com.uniboard.board_details.domain.BoardSettingsRepository
 
 interface RootModule {
     fun remoteObjectRepository(id: String): RemoteObjectRepository

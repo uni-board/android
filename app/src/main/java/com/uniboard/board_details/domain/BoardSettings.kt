@@ -1,4 +1,4 @@
-package com.uniboard.board_details.presentation.domain
+package com.uniboard.board_details.domain
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName

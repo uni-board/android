@@ -1,7 +1,7 @@
-package com.uniboard.board_details.presentation.data
+package com.uniboard.board_details.data
 import com.uniboard.board.data.to
-import com.uniboard.board_details.presentation.domain.BoardSettings
-import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
+import com.uniboard.board_details.domain.BoardSettings
+import com.uniboard.board_details.domain.BoardSettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
