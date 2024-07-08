@@ -2,11 +2,8 @@
     <string name="app_name">Uniboard</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="about_board">О доске</string>
-    <string name="name_board">Имя доски</string>
-    <string name="descrip_board">Описание доски</string>
-    <string name="share_board">Поделиться доской</string>
-    <string name="share_id">Поделиться по id</string>
-    <string name="share_url">Поделиться по ссылке</string>
-    <string name="None">None</string>
+    <string name="order_confirmation" />
+    <string name="screenshot_option">Screenshot</string>
+    <string name="help_option">Help</string>
+    <string name="another_board_option">Another board</string>
 </resources>
