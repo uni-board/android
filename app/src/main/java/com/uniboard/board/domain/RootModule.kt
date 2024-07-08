@@ -1,5 +1,8 @@
 package com.uniboard.board.domain
 
+import com.uniboard.onnboarding.domain.BoardCreatorRepository
+import com.uniboard.onnboarding.domain.RecentBoardsRepository
+
 import com.uniboard.board_details.domain.BoardSettingsRepository
 
 interface RootModule {
@@ -9,5 +12,7 @@ interface RootModule {
     val baseUrl: String
     val fileRepository: FileRepository
     val pdfRenderer: PdfRenderer
+    val boardCreatorRepository: BoardCreatorRepository
+    val recentBoardsRepository: RecentBoardsRepository
 
 }

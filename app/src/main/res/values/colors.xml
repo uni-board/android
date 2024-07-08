@@ -9,6 +9,7 @@
     <color name="gray">#383838</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white1">#FFFFFFFF</color>
+    <color name="light_gray2">#DEC5C5</color>
     <color name="greeny">#488969</color>
     <color name="green_middle">#235640</color>
     <color name="green_dark">#122812</color>
@@ -18,4 +19,5 @@
     <color name="orange2">#FFC97A</color>
     <color name="orange3">#FFAF3D</color>
     <color name="back_dialog">#DBDBDB</color>
+    <color name="deletebutton">#515156</color>
 </resources>

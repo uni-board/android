@@ -33,7 +33,9 @@ import com.uniboard.core.presentation.DefaultBoundsTransform
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.core.presentation.containerTransformScope
 import com.uniboard.core.presentation.sharedBounds
+import com.uniboard.help.presentation.DetailsHelpInfo
 import com.uniboard.help.presentation.HelpDestination
+import com.uniboard.help.presentation.HelpDetailsDestination
 import com.uniboard.help.presentation.HelpFragment
 import com.uniboard.onnboarding.presentation.OnboardingDestination
 import com.uniboard.onnboarding.presentation.OnboardingFragment
@@ -46,6 +48,7 @@ fun App(modifier: Modifier = Modifier) {
         Navigation(modifier)
     }
 }
+
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -87,7 +90,10 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                     key = OnboardingDestination,
                     scope = containerTransformScope(this)
                 ) {
+                    repository = boardCreatorRepository
+                    objectRepository = { remoteObjectRepository(it) }
                     // init from Root Module
+                    this.recentsRepository = recentBoardsRepository
                 }
             }
             composable<HelpDestination> {
@@ -99,6 +105,14 @@ private fun RootModule.Navigation(modifier: Modifier = Modifier) {
                 ) {
 
                 }
+            }
+            composable<HelpDetailsDestination> {
+                AnimatedNavigationFragment<DetailsHelpInfo>(
+                    navController = navController,
+                    scope = containerTransformScope(this),
+                    arguments = it.arguments,
+                    key = HelpDetailsDestination
+                )
             }
             composable<BoardDetailsDestination> {
                 AnimatedNavigationFragment<BoardDetailsFragment>(

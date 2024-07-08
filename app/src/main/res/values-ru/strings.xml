@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Uniboard</string>
+    <string name="screenshot_option">Снимок экрана</string>
+    <string name="help_option">Помощь</string>
+    <string name="another_board_option">Другая доска</string>
+</resources>
