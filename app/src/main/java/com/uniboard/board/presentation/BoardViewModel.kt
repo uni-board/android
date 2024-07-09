@@ -20,6 +20,7 @@ import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObjectUpdate
+import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
 import com.uniboard.core.presentation.rememberState
 import com.uniboard.util.mutate
 import kotlinx.coroutines.CoroutineScope
@@ -34,11 +35,13 @@ fun RootModule.BoardViewModel(id: String) =
         baseUrl = baseUrl,
         boardId = id,
         repository = remoteObjectRepository(id),
-        modifier = remoteObjectModifier(id)
+        modifier = remoteObjectModifier(id),
+        settingsRepository = boardSettingsRepository(id)
     )
 
 @Immutable
 data class BoardScreenState(
+    val boardName: String,
     val boardId: String,
     val objects: List<UiUObject>,
     val toolMode: BoardToolMode,
@@ -149,9 +152,10 @@ sealed interface BoardScreenEvent {
 
 class BoardViewModel(
     private val baseUrl: String,
-    val boardId: String,
+    private val boardId: String,
     private val repository: RemoteObjectRepository,
-    private val modifier: RemoteObjectModifier
+    private val modifier: RemoteObjectModifier,
+    private val settingsRepository: BoardSettingsRepository
 ) : ViewModel() {
 
     private val scope = CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
@@ -224,7 +228,13 @@ class BoardViewModel(
             }
             var showToolOptions by remember { mutableStateOf(false) }
             var showMore by remember { mutableStateOf(true) }
+            val boardName by produceState("Board") {
+                settingsRepository.get().onSuccess {
+                    value = it.name ?: "Board"
+                }
+            }
             BoardScreenState(
+                boardName = boardName,
                 boardId = boardId,
                 objects = objects,
                 toolMode = toolModes[currentToolMode] ?: BoardToolMode.View,
