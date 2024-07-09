@@ -75,11 +75,11 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
     }
 
     override fun onItemClick(position: Int, dataList: List<ItemsViewModel>) {
-        lifecycleScope.launch { navController.navigate(BoardDestination(dataList[position].heading)) }
+        lifecycleScope.launch { navController.navigate(BoardDestination(dataList[position].idd)) }
     }
 
     override fun onDelClick(position: Int, dataList: List<ItemsViewModel>) {
-        lifecycleScope.launch { recentsRepository!!.removeBoard(dataList[position].heading) }
+        lifecycleScope.launch { recentsRepository!!.removeBoard(dataList[position].idd) }
         recyclerView.adapter!!.notifyItemRemoved(position)
         val arrayyList = arrayListOf<ItemsViewModel>()
         for (i in dataList) {
@@ -145,9 +145,10 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
 
     private suspend fun dataInit() {
         arrayList = arrayListOf<ItemsViewModel>()
+        val idd = recentsRepository!!.getBoards()
         val name = recentsRepository!!.getBoards().map { getName(it) }
-        for (i in name) {
-            val array = i?.let { ItemsViewModel(it) }
+        for (i in name.indices) {
+            val array = name[i]?.let { ItemsViewModel(it, idd[i]) }
             if (array != null) {
                 arrayList.add(array)
             }
