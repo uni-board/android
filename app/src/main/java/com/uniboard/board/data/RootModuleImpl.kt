@@ -1,12 +1,14 @@
 package com.uniboard.board.data
 
 import android.content.Context
+import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
 import com.uniboard.board.domain.FileRepository
 import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.onnboarding.data.BoardCreatorRepositoryImpl
 import com.uniboard.onnboarding.data.RecentBoardsRepositoryImpl
+import com.uniboard.board_details.presentation.data.BoardSettingsRepositoryImpl
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,4 +44,8 @@ class RootModuleImpl(context: Context): RootModule {
     override val recentBoardsRepository by lazy {
         RecentBoardsRepositoryImpl(context)
     }
+    override fun boardSettingsRepository(id: String): BoardSettingsRepository {
+        return BoardSettingsRepositoryImpl(id, httpClient)
+    }
+
 }
