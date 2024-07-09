@@ -12,6 +12,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.uniboard.R
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.presentation.BoardDestination
+import com.uniboard.board_details.presentation.domain.BoardSettings
+import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentOnboardingBinding
 import com.uniboard.onnboarding.domain.BoardCreatorRepository
@@ -26,6 +28,7 @@ data object OnboardingDestination
 
 class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), CustomAdapter.OnItemClickListener {
     var recentsRepository: RecentBoardsRepository? = null
+    var boardSettingsRepository: ((id: String) -> BoardSettingsRepository)? = null
     lateinit var repository: BoardCreatorRepository
     private lateinit var adapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
@@ -107,23 +110,41 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), Cust
 
         val btnConnect : Button = messageBoxView.findViewById(R.id.btnPositive)
         val id = runBlocking { repository.createBoard().getOrThrow() }
+        val name : TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
+        val description : TextInputEditText = messageBoxView.findViewById(R.id.editDescr)
         val  messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
             navController.navigate(BoardDestination(id))
-            lifecycleScope.launch{ recentsRepository!!.addBoard(id)}
+            lifecycleScope.launch{ recentsRepository!!.addBoard(id); boardSettingsRepository?.invoke(id)?.update(
+                BoardSettings(name.text.toString(), description.text.toString())
+            )}
             messageBoxInstance.dismiss()
         }
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()
         }
     }
-
+    suspend fun getName(id: String) : String? {
+        return boardSettingsRepository?.invoke(id)!!.get().getOrThrow().name
+    }
     private suspend fun dataInit() {
         arrayList = arrayListOf<ItemsViewModel>()
-        heading = recentsRepository!!.getBoards()
-        for (i in heading.indices) {
-            val array = ItemsViewModel(heading[i])
-            arrayList.add(array)
+        val name = recentsRepository!!.getBoards().map{ getName(it)}
+        for (i in name) {
+            val array = i?.let { ItemsViewModel(it) }
+            if (array != null) {
+                arrayList.add(array)
+            }
         }
     }
+
+
+//    private suspend fun dataInit() {
+//        arrayList = arrayListOf<ItemsViewModel>()
+//        heading = recentsRepository!!.getBoards()
+//        for (i in heading.indices) {
+//            val array = ItemsViewModel(heading[i])
+//            arrayList.add(array)
+//        }
+//    }
 }
