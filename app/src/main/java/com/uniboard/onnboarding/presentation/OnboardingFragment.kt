@@ -26,7 +26,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data object OnboardingDestination
 
-class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), CustomAdapter.OnItemClickListener {
+class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
+    CustomAdapter.OnItemClickListener {
     var recentsRepository: RecentBoardsRepository? = null
     var boardSettingsRepository: ((id: String) -> BoardSettingsRepository)? = null
     lateinit var repository: BoardCreatorRepository
@@ -51,50 +52,58 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), Cust
             }
         }
     }
-    fun showMessageBoxList(){
+
+    fun showMessageBoxList() {
         val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.dialog_list, null)
         val layoutManager = LinearLayoutManager(context)
-        lifecycleScope.launch{dataInit()}
-        recyclerView = messageBoxView.findViewById(R.id.recycler_view)
-        recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
-        adapter = CustomAdapter(arrayList, this, this)
-        recyclerView.adapter = adapter
-        val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
-            .setView(messageBoxView)
-            .setTitle("Существующие id:")
-        val messageBoxInstance = messageBoxBuilder.show()
-        messageBoxView.setOnClickListener {
-            messageBoxInstance.dismiss()
+        lifecycleScope.launch {
+            dataInit()
+            recyclerView = messageBoxView.findViewById(R.id.recycler_view)
+            recyclerView.layoutManager = layoutManager
+            recyclerView.setHasFixedSize(true)
+            adapter = CustomAdapter(arrayList, this@OnboardingFragment, this@OnboardingFragment)
+            recyclerView.adapter = adapter
+            val messageBoxBuilder =
+                MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
+                    .setView(messageBoxView)
+                    .setTitle("Существующие id:")
+            val messageBoxInstance = messageBoxBuilder.show()
+            messageBoxView.setOnClickListener {
+                messageBoxInstance.dismiss()
+            }
         }
     }
 
     override fun onItemClick(position: Int, dataList: List<ItemsViewModel>) {
-        lifecycleScope.launch{navController.navigate(BoardDestination(dataList[position].heading))}
+        lifecycleScope.launch { navController.navigate(BoardDestination(dataList[position].heading)) }
     }
 
     override fun onDelClick(position: Int, dataList: List<ItemsViewModel>) {
-        lifecycleScope.launch{recentsRepository!!.removeBoard(dataList[position].heading)}
+        lifecycleScope.launch { recentsRepository!!.removeBoard(dataList[position].heading) }
         recyclerView.adapter!!.notifyItemRemoved(position)
         val arrayyList = arrayListOf<ItemsViewModel>()
         for (i in dataList) {
             if (i != dataList[position]) {
-            arrayyList.add(i)
+                arrayyList.add(i)
             }
         }
         recyclerView.adapter = CustomAdapter(arrayyList, this, this)
     }
 
-    fun showMessageBoxConnect(){
+    fun showMessageBoxConnect() {
         val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.fragment_dialog, null)
-        val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
-            .setView(messageBoxView)
-            .setTitle(" Подключись через id")
+        val messageBoxBuilder =
+            MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
+                .setView(messageBoxView)
+                .setTitle(" Подключись через id")
 
-        val btnConnect : Button = messageBoxView.findViewById(R.id.btnPositive)
+        val btnConnect: Button = messageBoxView.findViewById(R.id.btnPositive)
         val textId: TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
         val messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
+            lifecycleScope.launch {
+                recentsRepository?.addBoard(textId.text.toString())
+            }
             navController.navigate(BoardDestination(textId.text.toString()))
             messageBoxInstance.dismiss()
         }
@@ -102,34 +111,41 @@ class OnboardingFragment: NavigationFragment(R.layout.fragment_onboarding), Cust
             messageBoxInstance.dismiss()
         }
     }
-    fun showMessageBoxCreate(){
-        val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.fragment_dialog2, null)
-        val messageBoxBuilder = MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
-            .setView(messageBoxView)
-            .setTitle(" Введи название и описание")
 
-        val btnConnect : Button = messageBoxView.findViewById(R.id.btnPositive)
+    fun showMessageBoxCreate() {
+        val messageBoxView = LayoutInflater.from(activity).inflate(R.layout.fragment_dialog2, null)
+        val messageBoxBuilder =
+            MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
+                .setView(messageBoxView)
+                .setTitle(" Введи название и описание")
+
+        val btnConnect: Button = messageBoxView.findViewById(R.id.btnPositive)
         val id = runBlocking { repository.createBoard().getOrThrow() }
-        val name : TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
-        val description : TextInputEditText = messageBoxView.findViewById(R.id.editDescr)
-        val  messageBoxInstance = messageBoxBuilder.show()
+        val name: TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
+        val description: TextInputEditText = messageBoxView.findViewById(R.id.editDescr)
+        val messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
+            lifecycleScope.launch {
+                recentsRepository!!.addBoard(id)
+                boardSettingsRepository?.invoke(id)?.update(
+                    BoardSettings(name.text.toString(), description.text.toString())
+                )
+            }
             navController.navigate(BoardDestination(id))
-            lifecycleScope.launch{ recentsRepository!!.addBoard(id); boardSettingsRepository?.invoke(id)?.update(
-                BoardSettings(name.text.toString(), description.text.toString())
-            )}
             messageBoxInstance.dismiss()
         }
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()
         }
     }
-    suspend fun getName(id: String) : String? {
+
+    suspend fun getName(id: String): String? {
         return boardSettingsRepository?.invoke(id)!!.get().getOrThrow().name
     }
+
     private suspend fun dataInit() {
         arrayList = arrayListOf<ItemsViewModel>()
-        val name = recentsRepository!!.getBoards().map{ getName(it)}
+        val name = recentsRepository!!.getBoards().map { getName(it) }
         for (i in name) {
             val array = i?.let { ItemsViewModel(it) }
             if (array != null) {
