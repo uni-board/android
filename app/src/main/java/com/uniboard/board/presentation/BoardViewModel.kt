@@ -20,7 +20,7 @@ import com.uniboard.board.domain.RemoteObjectModifier
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.domain.RootModule
 import com.uniboard.board.domain.UObjectUpdate
-import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
+import com.uniboard.board_details.domain.BoardSettingsRepository
 import com.uniboard.core.presentation.rememberState
 import com.uniboard.util.mutate
 import kotlinx.coroutines.CoroutineScope

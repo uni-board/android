@@ -12,8 +12,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.uniboard.R
 import com.uniboard.board.domain.RemoteObjectRepository
 import com.uniboard.board.presentation.BoardDestination
-import com.uniboard.board_details.presentation.domain.BoardSettings
-import com.uniboard.board_details.presentation.domain.BoardSettingsRepository
+import com.uniboard.board_details.domain.BoardSettings
+import com.uniboard.board_details.domain.BoardSettingsRepository
 import com.uniboard.core.presentation.NavigationFragment
 import com.uniboard.databinding.FragmentOnboardingBinding
 import com.uniboard.onnboarding.domain.BoardCreatorRepository
