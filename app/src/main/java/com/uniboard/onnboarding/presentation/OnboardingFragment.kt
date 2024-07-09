@@ -34,7 +34,7 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
     private lateinit var adapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var arrayList: ArrayList<ItemsViewModel>
-    lateinit var heading: List<String>
+    //lateinit var heading: List<String>
     lateinit var objectRepository: (String) -> RemoteObjectRepository
     private lateinit var binding: FragmentOnboardingBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +66,7 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
             val messageBoxBuilder =
                 MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
                     .setView(messageBoxView)
-                    .setTitle("Существующие id:")
+                    .setTitle("Существующие доски:")
             val messageBoxInstance = messageBoxBuilder.show()
             messageBoxView.setOnClickListener {
                 messageBoxInstance.dismiss()
