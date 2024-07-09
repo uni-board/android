@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import androidx.core.view.isEmpty
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
@@ -67,6 +68,9 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
                 MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
                     .setView(messageBoxView)
                     .setTitle("Существующие доски:")
+            if (adapter.itemCount == 0) {
+                messageBoxBuilder.setTitle("НЕТ ДОСТУПНЫХ ДОСОК")
+            }
             val messageBoxInstance = messageBoxBuilder.show()
             messageBoxView.setOnClickListener {
                 messageBoxInstance.dismiss()
@@ -96,7 +100,6 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
             MaterialAlertDialogBuilder(requireActivity(), R.style.MaterialAlertDialog_rounded)
                 .setView(messageBoxView)
                 .setTitle(" Подключись через id")
-
         val btnConnect: Button = messageBoxView.findViewById(R.id.btnPositive)
         val textId: TextInputEditText = messageBoxView.findViewById(R.id.editTitle)
         val messageBoxInstance = messageBoxBuilder.show()
@@ -125,14 +128,16 @@ class OnboardingFragment : NavigationFragment(R.layout.fragment_onboarding),
         val description: TextInputEditText = messageBoxView.findViewById(R.id.editDescr)
         val messageBoxInstance = messageBoxBuilder.show()
         btnConnect.setOnClickListener {
-            lifecycleScope.launch {
-                recentsRepository!!.addBoard(id)
-                boardSettingsRepository?.invoke(id)?.update(
-                    BoardSettings(name.text.toString(), description.text.toString())
-                )
+            if (name.text.toString() != "") {
+                lifecycleScope.launch {
+                    recentsRepository!!.addBoard(id)
+                    boardSettingsRepository?.invoke(id)?.update(
+                        BoardSettings(name.text.toString(), description.text.toString())
+                    )
+                }
+                navController.navigate(BoardDestination(id))
+                messageBoxInstance.dismiss()
             }
-            navController.navigate(BoardDestination(id))
-            messageBoxInstance.dismiss()
         }
         messageBoxView.setOnClickListener {
             messageBoxInstance.dismiss()

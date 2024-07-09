@@ -22,7 +22,7 @@ class CustomAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = dataList[position]
         holder.titleTextView.text = data.heading
-        holder.titleTextView.setOnClickListener {
+        holder.itemView.setOnClickListener {
             listener1.onItemClick(holder.adapterPosition, dataList)
         }
         holder.btnDelview.setOnClickListener {
