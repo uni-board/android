@@ -42,9 +42,8 @@ class DetailsHelpInfo : NavigationFragment(R.layout.details_help_info) {
         val id = arguments?.getInt("arg") ?: -1
         val item = ItemsRepository.items.find { it.id == id }
         binding?.run {
-//            detailText.text = item!!.detailedText
-            detailText.text = "textasdddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasdddddddddddddddddddddddddddddddddddddddddddtextasddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-            detailImage1.setImageResource(item!!.detailedImages[0])
+            detailText.text = item!!.detailedText
+            detailImage1.setImageResource(item.detailedImages[0])
             detailImage2.setImageResource(item.detailedImages[1])
             }
     }
