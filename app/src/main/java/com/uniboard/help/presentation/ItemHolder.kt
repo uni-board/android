@@ -8,13 +8,14 @@ class ItemHolder(
     private val onClick: (ListItem) -> Unit,
 ) : ViewHolder(binding.root) {
 
-    fun onBind(music: ListItem){
+    fun onBind(item: ListItem){
         binding.run {
-            textShort.text = music.shortText
+            textShort.text = item.shortText
+            smallImage.setImageResource(item.smallImage)
             val radius = 12
 
             root.setOnClickListener {
-                onClick(music)
+                onClick(item)
             }
 
 
